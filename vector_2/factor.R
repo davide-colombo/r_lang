@@ -33,3 +33,19 @@ is.na(ff)[is.na(nums)] <- TRUE
 print("==================================================")
 print("After having set NA values properly")
 print(paste("is.na(ff) = ", is.na(ff)))
+
+print("==================================================")
+incomes <- c(60, 89, 45, 77, 61, 90, 44, 71)
+print(incomes)
+
+print("Demonstrate how to use the 'tapply()' function")
+incmeans <- tapply(incomes, sex, mean)
+print(incmeans)
+
+print("==================================================")
+print("Compute the standard error of the mean")
+print("Define a function (syntax similar to a lambda expression)")
+stdErrF <- function(x) sqrt(var(x)) / length(x)
+
+incstderr <- tapply(incomes, sex, stdErrF)
+print(incstderr)
