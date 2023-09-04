@@ -6,8 +6,38 @@ print("v1 <- 1:4")
 v1 <- 1:4
 print(v1)
 
-print()
 print("Using the 'c()' function")
 print("v2 <- c(10, 9, 13, 13, 13, 5, 5, 89, 0, -32)")
 v2 <- c(10, 9, 13, 13, 13, 5, 5, 89, 0, -32)
 print(v2)
+
+print("Evaluating expression '1/v1'")
+print(1/v1)
+
+print("Demonstrate vector arithmetic")
+v1 <- 1:4
+v2 <- 2:5
+print(v1)
+print(v2)
+print("v1 + v2 - (v1 * v2)")
+print(v1 + v2 - (v1*v2))
+
+print("Demonstrate arithmetic with vectors of different length")
+v1 <- 1:7
+print(length(v1))
+v2 <- c(2, 4, 8)
+print(length(v2))
+
+print("2 * v2 + v1 + 1")
+print(2*v2 + v1 + 1)
+
+print("Demonstrate min() and max() functions")
+print("max(v1)")
+print(max(v1))
+
+print("min(v2)")
+print(min(v2))
+
+print("Demonstrate range() function")
+print("range(1, 10)")
+print(range(1, 10))
