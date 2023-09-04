@@ -41,3 +41,16 @@ print(min(v2))
 print("Demonstrate range() function")
 print("range(1, 10)")
 print(range(1, 10))
+
+print("Demonstrate use of the seq() function")
+print("seq(20) -> generates a sequence from 1 to 20")
+print(seq(20))
+
+print("seq(from=3, to=15) generates a sequence from 3 to 15")
+print(seq(from=3, to=15))
+
+print("seq(from=7, to=2, by=-1) generates a sequence from 7 to 2")
+print(seq(from=7, to=2, by=-1))
+
+print("seq(from=0, to=20, length.out=13)")
+print(seq(from=0, to=20, length.out=13))
