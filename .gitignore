@@ -11,3 +11,6 @@
 .Rproj.user/
 .rs.user/
 .Rproj.user
+
+# Local directory
+example_files/
