@@ -49,3 +49,19 @@ stdErrF <- function(x) sqrt(var(x)) / length(x)
 
 incstderr <- tapply(incomes, sex, stdErrF)
 print(incstderr)
+
+print("==================================================")
+print("Use qt() function to get the 'number of standard deviations from the mean'")
+print(paste0("t-student's distribution, with ", length(incomes), " degrees of freedom"))
+
+# The qt() function by default returns the value for:
+# P(X <= x). We need to provide 'x' value to the function.
+
+df = length(incomes)-1
+t = qt(0.975, df=df)
+me = incstderr * t
+print(me)
+
+lb = incmeans - me
+ub = incmeans + me
+print(paste0("95th percent C.I.: ", lb, " - ", ub))
