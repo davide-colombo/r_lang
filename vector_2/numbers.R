@@ -54,3 +54,15 @@ print(seq(from=7, to=2, by=-1))
 
 print("seq(from=0, to=20, length.out=13)")
 print(seq(from=0, to=20, length.out=13))
+
+print("Demonstrate usage of the rep() function")
+print("x <- 1:4")
+x <- 1:4
+print("rep(x)")
+print(rep(x))
+
+print("rep(x, times=3)")
+print(rep(x, times=3))
+
+print("rep(x, times=3, each=2)")
+print(rep(x, times=3, each=2))
