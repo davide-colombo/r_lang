@@ -47,3 +47,16 @@ dt = fread(data, colClasses=list(character=2:4))
 #       colClasses=list(character=c("B", ...))
 
 dt
+
+cat("Demonstrate how to drop columns directly while reading\n")
+dt = fread(data, drop=2:3)
+
+# NOTE: alternatively
+#       colClasses=c("B"="NULL", ...)
+#       colClasses=list(NULL=c("B", ...))
+#       drop=c("B", ...)
+#
+#       The third alternative may be useful if we read the configuration
+#       from a file (e.g. yaml or json)
+
+dt
