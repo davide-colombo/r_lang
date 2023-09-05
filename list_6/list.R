@@ -27,3 +27,27 @@ for(i in 1:length(l1)){
 
 # NOTE: cycling through a list by using the index 'i' gives much a better
 #       sense of the structure of the list!!
+
+cat("Referring by: name$component\n")
+cat(sprintf("name: %s\n", l1$name))
+cat(sprintf("wife: %s\n", l1$wife))
+
+# NOTE: this is completely ignored!!!
+cat(sprintf("this_does_not_exist: %s\n", l1$notexist))
+
+cat("Demonstrate how to extract the named components from a list by
+    using the value of a variable\n")
+mynames <- c('gene1', 'gene33', 'gene45')
+
+ngenes <- 45
+geneseq <- seq(ngenes)
+
+basename <- 'gene'
+mygenes <- list(
+    genename=paste0(basename, geneseq),
+    genelevel=geneseq
+)
+
+cat("Extract all the genes from the list where there is a match\n")
+mylevels <- mygenes$genelevel[mygenes$genename %in% mynames]
+cat(sprintf("%s\n", mylevels))
