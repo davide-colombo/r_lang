@@ -60,3 +60,7 @@ dt = fread(data, drop=2:3)
 #       from a file (e.g. yaml or json)
 
 dt
+
+cat("Demonstrate how to select columns directly while reading\n")
+dt = fread(data, select=2:3)
+dt
