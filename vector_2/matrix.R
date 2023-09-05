@@ -129,3 +129,20 @@ print(m7)
 print("Demonstrate rbind() between matrix and shorter vector")
 m8 <- rbind(m3, vshort)
 print(m8)
+
+print("Demonstrate c() side-effect")
+a <- array(seq(from=9, to=81, by=9), dim=c(3, 3))
+print(a)
+print(dim(a))
+
+print("Demonstrate conversion from array to vector")
+v <- as.vector(a)
+cat(sprintf("mode(a) = %s, storage.mode(a) = %s, object.size(a) = %s\n",
+            mode(a), storage.mode(a), format(object.size(a), units='auto')))
+
+cat(sprintf("mode(v) = %s, storage.mode(v) = %s, object.size(v) = %s\n",
+            mode(v), storage.mode(v), format(object.size(v), units='auto')))
+
+cat(paste(v, collapse = ', '), "\n")
+cat(paste(a, collapse = ', '), "\n")
+
