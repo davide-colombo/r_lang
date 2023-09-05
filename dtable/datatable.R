@@ -64,3 +64,11 @@ dt
 cat("Demonstrate how to select columns directly while reading\n")
 dt = fread(data, select=2:3)
 dt
+
+cat("Demonstrate how to skip blank lines\n")
+data = "a,b\n1,a\n2,b\n\n3,c\n"
+data
+
+cat("... after reading data\n")
+dt = fread(data, blank.lines.skip=TRUE)
+dt
