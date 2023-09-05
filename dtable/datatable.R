@@ -3,3 +3,14 @@
 # manipulate the content.
 
 library("data.table")
+
+dt <- data.table(A=5:1, B=letters[5:1])
+cat("Data table\n")
+dt
+
+cat("Demonstrate how to 'setkey' to sort a data table\n")
+cat("setkey(dt, B)\n")
+setkey(dt, B)
+
+cat("Demonstrate data table sorted by B\n")
+dt
