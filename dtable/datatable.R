@@ -14,3 +14,13 @@ setkey(dt, B)
 
 cat("Demonstrate data table sorted by B\n")
 dt
+
+cat("Demonstrate how to use 'tables()' to get a summary of a data table\n")
+tables()
+
+cat("Demonstrate assignment (not copy)\n")
+dt2 = dt
+setkey(dt2, B)
+
+cat("Test whether or not the two data tables are identical\n")
+identical(dt, dt2)
