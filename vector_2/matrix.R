@@ -1,4 +1,4 @@
-# Simple example of how to use multi-dimensional vectors in R
+ # Simple example of how to use multi-dimensional vectors in R
 
 z <- 1:10
 print(z)
@@ -52,3 +52,35 @@ print(dim(indices))
 
 print("Use the matrix of indices to extract the elements from the other matrix")
 print(x[indices])
+
+print("Demonstrate mixed arithmetic between vector and arrays")
+
+# NOTE: arrays are just vectors in multiple dimensions.
+# An array is the generalization of the vector object.
+# Can hold data of the same type
+# Matrix is a convenient abstraction for a 2D vector
+
+v <- 1:9
+m <- matrix(1:9, nrow=3)
+print(v)
+print(dim(v))
+print(m)
+print(dim(m))
+
+print("m + v")
+print(m + v)
+# NOTE: it is possible to sum 'm' (3x3) and 'v' (1x9)
+# only because the size of 'm' is a multiple of 'v'
+
+print("But it is possible to sum a shorter array to a matrix")
+v <- 1:5
+print(v)
+print(dim(v))
+print("sum matrix (i.e., 2D array) with vector object")
+print(m + v)
+
+# Inspecting the matrix object
+print("Inspect the matrix object")
+print(paste0("mode(m) = ", mode(m)))
+print(paste0("storage.mode(m) = ", storage.mode(m)))
+print(paste0("typeof(m) = ", typeof(m)))
