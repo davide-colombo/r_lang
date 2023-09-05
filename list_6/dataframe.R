@@ -12,3 +12,7 @@ print(mode(df))
 print(storage.mode(df))
 print(typeof(df))
 print(format(object.size(df), units='auto'))
+
+print("Most efficient way to subset a data frame")
+print("df %>% filter(x > 2)")
+df %>% filter(x > 2)
