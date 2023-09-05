@@ -24,3 +24,11 @@ setkey(dt2, B)
 
 cat("Test whether or not the two data tables are identical\n")
 identical(dt, dt2)
+
+cat("Demonstrate copy()\n")
+dt = data.table(A=5:1, B=letters[5:1])
+dt3 = copy(dt)
+setkey(dt3, B)
+
+cat("Test whether or not the two data tables are identical\n")
+identical(dt3, dt)
