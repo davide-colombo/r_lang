@@ -40,3 +40,15 @@ print(dim(r))
 # c(a[2,1,1], a[2,2,1], a[2,3,1], a[2,4,1],
 #   a[2,1,2], a[2,2,2], a[2,3,2], a[2,4,2])
 
+print("Example on an actual matrix object")
+x <- matrix(1:20, nrow=4, ncol=5)
+print(x)
+print(dim(x))
+
+indices <- array(c(1:3, 3:1), dim=c(3, 2))
+print("Creating matrix of indices")
+print(indices)
+print(dim(indices))
+
+print("Use the matrix of indices to extract the elements from the other matrix")
+print(x[indices])
