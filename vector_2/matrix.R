@@ -84,3 +84,48 @@ print("Inspect the matrix object")
 print(paste0("mode(m) = ", mode(m)))
 print(paste0("storage.mode(m) = ", storage.mode(m)))
 print(paste0("typeof(m) = ", typeof(m)))
+
+print("Demonstrate how to use cbind() function")
+
+m1 <- matrix(1:9, nrow=3)
+print(m1)
+
+m2 <- matrix(1:27, nrow=3)
+print(m2)
+
+# cbind() works fine if the matrices have the same number of rows!!
+m3 <- cbind(m1, m2)
+print(m3)
+
+print("Vector of 19 elements: ")
+m4 <- 1:19
+print(m4)
+
+print("Demonstrate cbind() with arrays of different size")
+m5 <- cbind(m3, m4)
+print(m5)
+
+print("Demonstrate rbind() with arrays of different size")
+m6 <- rbind(m3, m4)
+print(m6)
+
+# NOTE: the rbind() function only appends rows of the same size of a matrix!
+#       So, if a vector has more elements that the "NUMBER OF COLUMNS" of the
+#       matrix, then rbind() stops appending elements from the vector when the
+#       row is saturated.
+#
+#       In other words, the "RECYCLING RULE" does not apply!!
+
+print("A shorter vector")
+vshort <- 1:2
+print(vshort)
+
+print("Demonstrate cbind() between matrix and shorter vector")
+m7 <- cbind(m3, vshort)
+print(m7)
+
+# NOTE: the recycling rule does apply here!!
+
+print("Demonstrate rbind() between matrix and shorter vector")
+m8 <- rbind(m3, vshort)
+print(m8)
