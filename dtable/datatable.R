@@ -32,3 +32,18 @@ setkey(dt3, B)
 
 cat("Test whether or not the two data tables are identical\n")
 identical(dt3, dt)
+
+# ===================================================================
+# DEMONSTRATE HOW TO USE 'fread()' FUNCTION TO EFFICIENTLY READ FILES
+# ===================================================================
+
+# https://rdatatable.gitlab.io/data.table/reference/fread.html
+
+data = "A,B,C,D\n1,3,5,7\n2,4,6,8\n"
+dt = fread(data, colClasses=list(character=2:4))
+
+# NOTE: alternatively:
+#       colClasses=c(B="character", ...)
+#       colClasses=list(character=c("B", ...))
+
+dt
