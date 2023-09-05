@@ -137,11 +137,11 @@ print(dim(a))
 
 print("Demonstrate conversion from array to vector")
 v <- as.vector(a)
-cat(sprintf("mode(a) = %s, storage.mode(a) = %s, object.size(a) = %s\n",
-            mode(a), storage.mode(a), format(object.size(a), units='auto')))
+cat(sprintf("mode(a) = %s, storage.mode(a) = %s, object.size(a) = %s, class = %s\n",
+            mode(a), storage.mode(a), format(object.size(a), units='auto'), class(a)))
 
-cat(sprintf("mode(v) = %s, storage.mode(v) = %s, object.size(v) = %s\n",
-            mode(v), storage.mode(v), format(object.size(v), units='auto')))
+cat(sprintf("mode(v) = %s, storage.mode(v) = %s, object.size(v) = %s, class = %s\n",
+            mode(v), storage.mode(v), format(object.size(v), units='auto'), class(v)))
 
 cat(paste(v, collapse = ', '), "\n")
 cat(paste(a, collapse = ', '), "\n")
