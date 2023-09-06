@@ -113,6 +113,11 @@ print("Demonstrate how to count lines using readBin()")
 fb <- file(tmp, open="rb")
 nlines <- 0L
 while(length(chunk <- readBin(fb, "raw", 1024)) > 0){
+    print("READ A CHUNK")
     nlines <- nlines + sum(chunk == as.raw(10L))
+    print(chunk)
+    cat(sprintf("%02x", as.integer(chunk)), "\n")
+    cat(sprintf("%s", rawToChar(chunk)), "\n")
+    print("FINISH READ A CHUNK")
 }
 cat(sprintf("nlines = %d\n", nlines))
