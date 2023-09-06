@@ -105,3 +105,14 @@ cat(sprintf("nlines: %d\n", nlines))
 
 # NOTE: it is crucial to specify always the open=""
 #       parameter in the file() function
+
+# ================================================================
+# READ FILE BINARY MODE AS BLOCKS
+# ================================================================
+print("Demonstrate how to count lines using readBin()")
+fb <- file(tmp, open="rb")
+nlines <- 0L
+while(length(chunk <- readBin(fb, "raw", 1024)) > 0){
+    nlines <- nlines + sum(chunk == as.raw(10L))
+}
+cat(sprintf("nlines = %d\n", nlines))
