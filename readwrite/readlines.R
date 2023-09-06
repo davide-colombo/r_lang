@@ -68,6 +68,9 @@ writeLines(
 # cat("Hello", "Hola", "Ciao", file=fw, sep='\n')
 close(fw)
 
+# ================================================================
+# READ FILE THROUGH REPEAT STATEMENT
+# ================================================================
 print("Demonstrate how to cycle through file using repeat{}")
 nlines <- 0
 fr <- file(tmp, "rt")
@@ -89,18 +92,16 @@ cat(sprintf("nlines: %d\n", nlines))
 # ================================================================
 # READ FILE THROUGH WHILE LOOP
 # ================================================================
-# print("Demonstrate how to loop over a file with while()")
-#
-# anothergetline <- function(con){
-#     return(readLines(con))
-# }
-#
-# nlines <- 0
-# fr <- file(tmp, "rt", blocking=FALSE)
-# while(length(ll <- mygetline(fr)) > 0){
-#     nlines <- nlines+1
-#     cat(sprintf("ll: %s\tnlines = %d\tlength(ll) = %d\n",
-#                 ll, nlines, length(ll)))
-# }
-# close(fr)
-# cat(sprintf("nlines: %d\n", nlines))
+print("Demonstrate how to loop over a file with while()")
+nlines <- 0
+fr <- file(tmp, "rt")
+while(length(ll <- readLines(fr, n=1)) > 0){
+    nlines <- nlines+1
+    cat(sprintf("ll: %s\tnlines = %d\tlength(ll) = %d\n",
+                ll, nlines, length(ll)))
+}
+close(fr)
+cat(sprintf("nlines: %d\n", nlines))
+
+# NOTE: it is crucial to specify always the open=""
+#       parameter in the file() function
