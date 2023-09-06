@@ -25,10 +25,18 @@ readLines(fn, n = -1)   # read the whole file
 #       does not contain a '\n'!!!
 
 print("Demonstrate how to open a file connection")
-con <- file(fn, 'r')
-
-if(con){
+ff <- file(fn, 'r')
+if(ff){
     print("Connection successfully opened")
 }
 
-close(con)
+print("Demonstrate readLines() on the file connection")
+print("readLines(ff)")
+readLines(ff)
+
+print("Closing file connection")
+close(ff)
+ff
+
+# close(ff)     ERROR!
+
