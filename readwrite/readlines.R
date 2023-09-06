@@ -68,20 +68,11 @@ writeLines(
 # cat("Hello", "Hola", "Ciao", file=fw, sep='\n')
 close(fw)
 
-print("Demonstrate how to cycle through file")
-
-# NOTE: need to define a function that encapsulate
-#       the 'readLines()' function
-
-mygetline <- function(con){
-    return(readLines(con, n=1))
-}
-
+print("Demonstrate how to cycle through file using repeat{}")
 nlines <- 0
 fr <- file(tmp, "rt")
-
 repeat{
-    ll <- mygetline(fr)
+    ll <- readLines(fr, n=1)
     if(length(ll) == 0){
         break
     }
@@ -91,3 +82,25 @@ repeat{
 }
 close(fr)
 cat(sprintf("nlines: %d\n", nlines))
+
+# NOTE: removing the the "rt" flag from file() function call
+#       generates an infinite loop!!
+
+# ================================================================
+# READ FILE THROUGH WHILE LOOP
+# ================================================================
+# print("Demonstrate how to loop over a file with while()")
+#
+# anothergetline <- function(con){
+#     return(readLines(con))
+# }
+#
+# nlines <- 0
+# fr <- file(tmp, "rt", blocking=FALSE)
+# while(length(ll <- mygetline(fr)) > 0){
+#     nlines <- nlines+1
+#     cat(sprintf("ll: %s\tnlines = %d\tlength(ll) = %d\n",
+#                 ll, nlines, length(ll)))
+# }
+# close(fr)
+# cat(sprintf("nlines: %d\n", nlines))
