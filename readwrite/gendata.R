@@ -31,7 +31,7 @@ chroname <- paste0(prefix_chroname, chronum)
 genename <- paste0(prefix_genename, genenum)
 
 # Data frame
-dt <- data.frame(chroname, chronum, genename, genenum)
+dt <- data.frame(chroname, chronum, genename, genenum, explevels)
 cat(sprintf("size: %s\n", format(object.size(dt), units='auto')))
 cat(sprintf("colnames: %s\n", colnames(dt)))
 cat(sprintf("nrow = %d\tncol = %d\tlength = %d\n",

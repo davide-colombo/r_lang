@@ -76,6 +76,7 @@ dt
 cat("Demonstrate how to fill with NAs\n")
 data = "a,b\n1,a\n2\n3,c\n"
 print(data)
-cat("...after reading\n")
+
 dt = fread(data, fill=TRUE)
+cat("...after reading\n")
 dt
