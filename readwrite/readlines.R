@@ -40,3 +40,18 @@ ff
 
 # close(ff)     ERROR!
 
+print("Using a temporary file")
+ft <- tempfile("test")
+ft
+
+cat("123\nabc", file=ft)
+readLines(ft)
+
+# NOTE: the last line is incomplete,
+#       this generates a warning
+
+print("Demonstrate non-blocking connection")
+ff <- file(ft, blocking=FALSE)
+cat(sprintf("line: '%s'\n", readLines(ff)))
+
+# NOTE: readLines() stops because of the blocking behavior
