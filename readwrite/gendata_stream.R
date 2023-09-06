@@ -59,6 +59,13 @@ max_gene_exp = param$max_gene_exp
 # Main loop
 fw <- file(opath, "wt")
 log_info("file '{opath}' successfully opened", namespace=lognamespace)
+myheader <- paste(
+    'chromosome_id', 'chromosome_name',
+    'gene_id', 'gene_name', 'read_count',
+    sep=tokensep
+)
+writeLines(myheader, fw)
+
 for(i in 1:howmany){
     explevel <- sample(0:max_gene_exp, 1)
     genenum <- sample(1:max_gene_num, 1)
