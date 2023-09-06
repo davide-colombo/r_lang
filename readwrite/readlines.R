@@ -53,5 +53,41 @@ readLines(ft)
 print("Demonstrate non-blocking connection")
 ff <- file(ft, blocking=FALSE)
 cat(sprintf("line: '%s'\n", readLines(ff)))
+close(ff)
 
 # NOTE: readLines() stops because of the blocking behavior
+
+print("Demonstrate usage of writeLines() function")
+tmp <- file.path(odir, 'cheers.data')
+fw <- file(tmp, 'wt')
+writeLines(
+    c("Hello", "Hola", "Ciao"),
+    fw
+)
+
+# cat("Hello", "Hola", "Ciao", file=fw, sep='\n')
+close(fw)
+
+print("Demonstrate how to cycle through file")
+
+# NOTE: need to define a function that encapsulate
+#       the 'readLines()' function
+
+mygetline <- function(con){
+    return(readLines(con, n=1))
+}
+
+nlines <- 0
+fr <- file(tmp, "rt")
+
+repeat{
+    ll <- mygetline(fr)
+    if(length(ll) == 0){
+        break
+    }
+    nlines <- nlines+1
+    cat(sprintf("ll: %s\tnlines = %d\tlength(ll) = %d\n",
+                ll, nlines, length(ll)))
+}
+close(fr)
+cat(sprintf("nlines: %d\n", nlines))
