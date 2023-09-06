@@ -47,3 +47,12 @@ stat3 <- rawdata[gene_id %in% genesubset,
                  by = gene_name]
 print("Compute the sample mean of #reads for a subset of genes grouped by gene name")
 print(stat3)
+
+stat4 <- rawdata[chromosome_id == 3 & gene_id %in% genesubset,
+                 .("mean"=mean(read_count), .N),
+                 by = gene_id][order(mean)]
+print("Compute the sample mean of #reads for a subset of genes on chromosome3 grouped by gene id, ordered by mean values")
+print(stat4)
+
+# NOTE: I need to use 'chaining' because the column 'mean' does not exist
+#       before the expression is evaluated!
