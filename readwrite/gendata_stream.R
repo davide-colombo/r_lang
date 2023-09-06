@@ -26,22 +26,25 @@ log_threshold(
     namespace=lognamespace
 )
 
-log_info("======================= START RUN =======================")
+# IMPORTANT INSIGHT: if I pass the proper namespace, the level is properly set
+# log_threshold(namespace=lognamespace)
+
+log_info("======================= START RUN =======================", namespace=lognamespace)
 
 # Setting up the output file
 output = config$output
 tokensep = output$sep
 odir = output$dirname
 if(!dir.exists(odir)){
-    log_info("creating directory '{odir}'")
+    log_info("creating directory '{odir}'", namespace=lognamespace)
     dir.create(odir)
 }
 
 fname = output$fname
 opath = file.path(odir, fname)
-log_info("output file: {opath}")
+log_info("output file: {opath}", namespace=lognamespace)
 if(!file.exists(opath)){
-    log_info("creating file '{opath}'")
+    log_info("creating file '{opath}'", namespace=lognamespace)
     file.create(opath)
 }
 
@@ -55,7 +58,7 @@ max_gene_exp = param$max_gene_exp
 
 # Main loop
 fw <- file(opath, "wt")
-log_info("file '{opath}' successfully opened")
+log_info("file '{opath}' successfully opened", namespace=lognamespace)
 for(i in 1:howmany){
     explevel <- sample(0:max_gene_exp, 1)
     genenum <- sample(1:max_gene_num, 1)
@@ -66,8 +69,8 @@ for(i in 1:howmany){
     oline <- paste(chronum, chroname, genenum, genename, explevel, sep=tokensep)
     writeLines(oline, fw)
 }
-log_info("successfully written {howmany} lines")
+log_info("successfully written {howmany} lines", namespace=lognamespace)
 
 close(fw)
-log_info("file '{opath}' successfully closed")
-log_info("======================= END RUN =======================")
+log_info("file '{opath}' successfully closed", namespace=lognamespace)
+log_info("======================= END RUN =======================", namespace=lognamespace)
