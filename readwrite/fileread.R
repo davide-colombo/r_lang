@@ -43,7 +43,7 @@ print(stat2)
 
 genesubset <- c(33, 56, 767, 331)
 stat3 <- rawdata[gene_id %in% genesubset,
-                 list("mean"=mean(read_count), "count"=length(read_count)),
+                 .("mean"=mean(read_count), .N),
                  by = gene_name]
 print("Compute the sample mean of #reads for a subset of genes grouped by gene name")
 print(stat3)
