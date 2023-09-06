@@ -10,7 +10,12 @@ conf_path = './config/genstream.yml'
 if(!file.exists(conf_path)){
     stop("Missing configuration file at: ", conf_path)
 }
+
 config = yaml.load_file(conf_path)
+
+# Extract the script name
+args <- commandArgs(trailingOnly = FALSE)
+scriptname <- basename(sub("--file=", "", args[grep("--file=", args)]))
 
 # Setting up the logger
 conf_log = config$logger
