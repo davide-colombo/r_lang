@@ -3,3 +3,6 @@ ioexamples/
 config/
 plots/
 log/
+
+# Ignore HTML files
+*.html
