@@ -12,58 +12,51 @@ if(!file.exists(conf_path)){
 }
 
 # Take configuration for generator script
-cf = yaml.load_file(conf_path)$gen
+cf_gendata_stream = yaml.load_file(conf_path)$gen
 
 # Setting up the logger
-cf_log = cf$logger
-ns_log = cf_log$namespace
-
-logpath = file.path(cf_log$dirname, cf_log$fname)
-log_appender(
-    appender=appender_file(logpath, append=TRUE, max_files=5L)
-)
-
-log_threshold(
-    level=cf_log$level,
-    namespace=ns_log
-)
+cf_l_genstream = cf_gendata_stream$logger
+ns_l_genstream = cf_l_genstream$namespace
+lpath_genstream = file.path(cf_l_genstream$dirname, cf_l_genstream$fname)
+log_appender(appender=appender_file(lpath_genstream, append=TRUE))
+log_threshold(level=cf_l_genstream$level, namespace=ns_l_genstream)
 
 # IMPORTANT INSIGHT: if I pass the proper namespace, the level is properly set
 # log_threshold(namespace=lognamespace)
 
-log_info("======================= START RUN =======================", namespace=ns_log)
+log_info("======================= START RUN =======================", namespace=ns_l_genstream)
 
 # Output configuration
-cf_out = cf$output
-tokensep = cf_out$sep
+cf_o_genstream = cf_gendata_stream$output
+tokensep = cf_o_genstream$sep
 
 # Output directory
-odir = cf_out$dirname
-if(!dir.exists(odir)){
-    log_info("creating directory '{odir}'", namespace=ns_log)
-    dir.create(odir)
+odir_genstream = cf_o_genstream$dirname
+if(!dir.exists(odir_genstream)){
+    log_info("creating directory '{odir_genstream}'", namespace=ns_l_genstream)
+    dir.create(odir_genstream)
 }
 
 # Output file
-fn = cf_out$fname
-opath = file.path(odir, fn)
-log_info("output file: {opath}", namespace=ns_log)
-if(!file.exists(opath)){
-    log_info("creating file '{opath}'", namespace=ns_log)
-    file.create(opath)
+ofname_genstream = cf_o_genstream$fname
+opath_genstream = file.path(odir_genstream, ofname_genstream)
+log_info("output file: {opath_genstream}", namespace=ns_l_genstream)
+if(!file.exists(opath_genstream)){
+    log_info("creating file '{opath_genstream}'", namespace=ns_l_genstream)
+    file.create(opath_genstream)
 }
 
 # Setting up the generator parameters
-cf_p = cf$param
-set.seed(cf_p$seed)
-howmany = cf_p$howmany
-max_gene_num = cf_p$max_gene_num
-max_chro_num = cf_p$max_chro_num
-max_gene_exp = cf_p$max_gene_exp
+cf_p_genstream = cf_gendata_stream$param
+set.seed(cf_p_genstream$seed)
+howmany = cf_p_genstream$howmany
+max_gene_num = cf_p_genstream$max_gene_num
+max_chro_num = cf_p_genstream$max_chro_num
+max_gene_exp = cf_p_genstream$max_gene_exp
 
 # File connection
-fw <- file(opath, "wt")
-log_info("file '{opath}' successfully opened", namespace=ns_log)
+con_w_genstream <- file(opath_genstream, "wt")
+log_info("file '{opath_genstream}' successfully opened", namespace=ns_l_genstream)
 
 # Header
 myheader <- paste(
@@ -71,7 +64,7 @@ myheader <- paste(
     'gene_id', 'gene_name', 'read_count',
     sep=tokensep
 )
-writeLines(myheader, fw)
+writeLines(myheader, con_w_genstream)
 
 # Generate rows
 for(i in 1:howmany){
@@ -82,10 +75,10 @@ for(i in 1:howmany){
     chroname <- paste0('c_', chronum)
 
     oline <- paste(chronum, chroname, genenum, genename, explevel, sep=tokensep)
-    writeLines(oline, fw)
+    writeLines(oline, con_w_genstream)
 }
-log_info("successfully written {howmany} lines", namespace=ns_log)
+log_info("successfully written {howmany} lines", namespace=ns_l_genstream)
 
-close(fw)
-log_info("file '{opath}' successfully closed", namespace=ns_log)
-log_info("======================= END RUN =======================", namespace=ns_log)
+close(con_w_genstream)
+log_info("file '{opath_genstream}' successfully closed", namespace=ns_l_genstream)
+log_info("======================= END RUN =======================", namespace=ns_l_genstream)
