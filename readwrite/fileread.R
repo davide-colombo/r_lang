@@ -1,5 +1,6 @@
 # Example of using fread() function to read a big file
 
+library(ggplot2)
 library(data.table)
 library(yaml)
 
@@ -49,10 +50,29 @@ print("Compute the sample mean of #reads for a subset of genes grouped by gene n
 print(stat3)
 
 stat4 <- rawdata[chromosome_id == 3 & gene_id %in% genesubset,
-                 .("mean"=mean(read_count), .N),
+                 .("mean"=mean(read_count), "sd"=sd(read_count), .N),
                  by = gene_id][order(mean)]
 print("Compute the sample mean of #reads for a subset of genes on chromosome3 grouped by gene id, ordered by mean values")
 print(stat4)
 
 # NOTE: I need to use 'chaining' because the column 'mean' does not exist
 #       before the expression is evaluated!
+print("============================================================")
+stat5 <- rawdata[chromosome_id == 3 & gene_id %in% genesubset, .(total_reads = sum(read_count)), by = gene_id][order(total_reads)]
+print(stat5)
+
+# ===================================================================
+# Draw barplots with 'ggplot2'
+# ===================================================================
+graphconfig <- config$graphs
+ographdir <- graphconfig$dirname
+ographpath <- file.path(ographdir, 'barplot_stats5.pdf')
+
+# Create and store the plot object
+bars_stat5 <- ggplot(stat5, aes(x = gene_id, y = total_reads)) +
+    geom_bar(stat = 'identity')
+
+pdf(ographpath, onefile=TRUE)
+
+# Display the plot
+plot(bars_stat5)
