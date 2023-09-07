@@ -6,64 +6,66 @@ library(logger)
 library(yaml)
 
 # Load the configuration file
-conf_path = './config/genstream.yml'
+conf_path = './config/conf.yml'
 if(!file.exists(conf_path)){
     stop("Missing configuration file at: ", conf_path)
 }
 
-config = yaml.load_file(conf_path)
-
-# Extract the script name
-args <- commandArgs(trailingOnly = FALSE)
-scriptname <- basename(sub("--file=", "", args[grep("--file=", args)]))
+# Take configuration for generator script
+cf = yaml.load_file(conf_path)$gen
 
 # Setting up the logger
-conf_log = config$logger
-lognamespace = conf_log$namespace
+cf_log = cf$logger
+ns_log = cf_log$namespace
 
-logpath = file.path(conf_log$dirname, conf_log$fname)
+logpath = file.path(cf_log$dirname, cf_log$fname)
 log_appender(
     appender=appender_file(logpath, append=TRUE, max_files=5L)
 )
 
 log_threshold(
-    level=conf_log$level,
-    namespace=lognamespace
+    level=cf_log$level,
+    namespace=ns_log
 )
 
 # IMPORTANT INSIGHT: if I pass the proper namespace, the level is properly set
 # log_threshold(namespace=lognamespace)
 
-log_info("======================= START RUN =======================", namespace=lognamespace)
+log_info("======================= START RUN =======================", namespace=ns_log)
 
-# Setting up the output file
-output = config$output
-tokensep = output$sep
-odir = output$dirname
+# Output configuration
+cf_out = cf$output
+tokensep = cf_out$sep
+
+# Output directory
+odir = cf_out$dirname
 if(!dir.exists(odir)){
-    log_info("creating directory '{odir}'", namespace=lognamespace)
+    log_info("creating directory '{odir}'", namespace=ns_log)
     dir.create(odir)
 }
 
-fname = output$fname
-opath = file.path(odir, fname)
-log_info("output file: {opath}", namespace=lognamespace)
+# Output file
+fn = cf_out$fname
+opath = file.path(odir, fn)
+log_info("output file: {opath}", namespace=ns_log)
 if(!file.exists(opath)){
-    log_info("creating file '{opath}'", namespace=lognamespace)
+    log_info("creating file '{opath}'", namespace=ns_log)
     file.create(opath)
 }
 
 # Setting up the generator parameters
-param = config$param
-set.seed(param$seed)
-howmany = param$howmany
-max_gene_num = param$max_gene_num
-max_chro_num = param$max_chro_num
-max_gene_exp = param$max_gene_exp
+cf_p = cf$param
+set.seed(cf_p$seed)
+howmany = cf_p$howmany
+max_gene_num = cf_p$max_gene_num
+max_chro_num = cf_p$max_chro_num
+max_gene_exp = cf_p$max_gene_exp
 
-# Main loop
+# File connection
 fw <- file(opath, "wt")
-log_info("file '{opath}' successfully opened", namespace=lognamespace)
+log_info("file '{opath}' successfully opened", namespace=ns_log)
+
+# Header
 myheader <- paste(
     'chromosome_id', 'chromosome_name',
     'gene_id', 'gene_name', 'read_count',
@@ -71,6 +73,7 @@ myheader <- paste(
 )
 writeLines(myheader, fw)
 
+# Generate rows
 for(i in 1:howmany){
     explevel <- sample(0:max_gene_exp, 1)
     genenum <- sample(1:max_gene_num, 1)
@@ -81,8 +84,8 @@ for(i in 1:howmany){
     oline <- paste(chronum, chroname, genenum, genename, explevel, sep=tokensep)
     writeLines(oline, fw)
 }
-log_info("successfully written {howmany} lines", namespace=lognamespace)
+log_info("successfully written {howmany} lines", namespace=ns_log)
 
 close(fw)
-log_info("file '{opath}' successfully closed", namespace=lognamespace)
-log_info("======================= END RUN =======================", namespace=lognamespace)
+log_info("file '{opath}' successfully closed", namespace=ns_log)
+log_info("======================= END RUN =======================", namespace=ns_log)
