@@ -15,6 +15,12 @@ if(!file.exists(configpath)){
 }
 
 config = yaml.load_file(configpath)
+
+# Graphics configuration parameters
+graphconfig <- config$graphs
+ographdir <- graphconfig$dirname
+
+# Output configuration parameters
 output = config$output
 ifpath = file.path(output$dirname, output$fname)
 if(!file.exists(ifpath)){
@@ -44,10 +50,19 @@ print(stat2)
 
 genesubset <- c(33, 56, 767, 331)
 stat3 <- rawdata[gene_id %in% genesubset,
-                 .("mean"=mean(read_count), .N),
-                 by = gene_name]
-print("Compute the sample mean of #reads for a subset of genes grouped by gene name")
+                 .("avg_read_count"=mean(read_count), .N),
+                 by = .(chromosome_name, gene_name)]
+print("Compute the sample mean of #reads for a subset of genes grouped by gene and chromosome name")
 print(stat3)
+
+# ===================================================================
+# Display a plot and color the columns based on the chromosome ID
+barplot_stat3 <- ggplot(stat3, aes(x=gene_name, y=avg_read_count, fill=chromosome_name)) +
+    geom_bar(stat = 'identity')
+
+ographfpath <- file.path(ographdir, "barplot_stat3.pdf")
+pdf(ographfpath, onefile=TRUE)
+plot(barplot_stat3)
 
 stat4 <- rawdata[chromosome_id == 3 & gene_id %in% genesubset,
                  .("mean"=mean(read_count), "sd"=sd(read_count), .N),
@@ -64,14 +79,14 @@ print(stat5)
 # ===================================================================
 # Draw barplots with 'ggplot2'
 # ===================================================================
-graphconfig <- config$graphs
-ographdir <- graphconfig$dirname
+# Setting the path to the graph
 ographpath <- file.path(ographdir, 'barplot_stats5.pdf')
 
 # Create and store the plot object
 bars_stat5 <- ggplot(stat5, aes(x = gene_id, y = total_reads)) +
-    geom_bar(stat = 'identity')
+    geom_bar(stat = 'identity', fill='#FF6600')
 
+# Store the plot as a .pdf file
 pdf(ographpath, onefile=TRUE)
 
 # Display the plot
