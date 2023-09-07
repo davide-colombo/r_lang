@@ -57,8 +57,17 @@ print(stat3)
 
 # ===================================================================
 # Display a plot and color the columns based on the chromosome ID
+y_lim = stat3[,round(max(avg_read_count)) + 10]
+y_bins = seq(0, y_lim, by=round(y_lim/10))
+y_lim = y_bins[length(y_bins)]
+
 barplot_stat3 <- ggplot(stat3, aes(x=gene_name, y=avg_read_count, fill=chromosome_name)) +
-    geom_bar(stat = 'identity')
+    geom_bar(stat = 'identity', position=position_dodge()) +
+    ggplot2::scale_y_continuous(limits=c(0, y_lim), breaks=y_bins) +
+    geom_text(aes(label=round(avg_read_count,2)),
+                position=position_dodge(width=0.9), vjust=-0.3,
+                family='Courier', size=2) +
+    labs(title="Average #read count grouped by gene and chromosome name")
 
 ographfpath <- file.path(ographdir, "barplot_stat3.pdf")
 pdf(ographfpath, onefile=TRUE)
