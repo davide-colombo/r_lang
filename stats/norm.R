@@ -22,6 +22,6 @@ title=paste('Histogram of', nsamples,
 myxlim=c(round(min(rawX)-10), round(max(rawX)+10))
 pdf(opath, onefile=TRUE)
 hist(rawX, main=title, freq=FALSE, xlim=myxlim, col='#FF6600')
-curve(dnorm(x, mean=mean(rawX), sd=sd(rawX)), add=TRUE, col='#0066FF')
+curve(dnorm(x, mean=mean(rawX), sd=sd(rawX)), add=TRUE, col='#0066FF', lty=2)
 curve(dnorm(x, mean=true_mean, sd=true_sd), add=TRUE, col='#00EE66')
 dev.off()
