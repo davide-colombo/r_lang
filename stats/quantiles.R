@@ -22,13 +22,15 @@
 # WHY IS THIS WRONG?
 # Because the cut points are not equally likely, especially for a set of data
 # with repeated samples.
-set.seed(456378)
+set.seed(123456)
+
+n = 20
+true_mu = 42.1
+true_sd = 5.67
 
 # Raw data
-x <- sample(x=23:89, size=100, replace=TRUE)
-
-# Number of samples
-n = length(x)
+# x <- rnorm(n=n, mean=true_mu, sd=true_sd)
+x <- sample(rnorm(n=1, mean=true_mu, sd=true_sd), size=n, replace=TRUE)
 
 # Sorted
 x <- sort(x)
@@ -48,18 +50,23 @@ xcf <- cumsum(xf)
 # Cumulative relative frequency
 xcrf <- cumsum(xf) / n
 
-cat(sprintf("%s\n", paste('x =', xu, 'abs =', xf, 'rel =', xrf, 'cum =', xcf, 'crel =', xcrf, sep='\t')))
+# cat(sprintf("%s\n", paste('x =', round(xu, 2), 'abs =', xf, 'rel =', xrf, 'cum =', xcf, 'crel =', xcrf, sep='\t')))
 
-# Percentage variability that encompass the value of interest
-prc = seq(0, 1, 0.25)
+opath <- 'plots/combined_x.pdf'
+pdf(opath)
+par(mfrow=c(2, 2))
+# hist(x, col='#00FF66', main=paste('Absolute frequency (n =', n, ')'))
+# hist(x, col='#0066FF', main=paste('Relative frequency (n =', n, ')'), freq=FALSE)
+plot(xu, xf)
+plot(xu, xrf)
+plot(xu, xcf)
+plot(xu, xcrf)
+curve(pnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+dev.off()
 
-# The position of the values of interest
-rk_prc = prc * n
-
-# opath <- 'plots/hist_quantiles.pdf'
-# pdf(opath)
-# hist(x, col='#00FF66', main=paste('Random sample with replacement, n =', n))
-# dev.off()
+# Rank of the data
+xrk <-rank(x)
+print(xrk)
 
 # # Using the quantile() function to compute quartiles
 # probs = seq(0, 1, 0.25)
