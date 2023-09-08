@@ -22,20 +22,51 @@
 # WHY IS THIS WRONG?
 # Because the cut points are not equally likely, especially for a set of data
 # with repeated samples.
+set.seed(456378)
 
+# Raw data
 x <- sample(x=23:89, size=100, replace=TRUE)
 
-# Using the quantile() function to compute quartiles
-probs = seq(0, 1, 0.25)
-q4 <- quantile(x, probs=probs, na.rm=FALSE)
-cat(sprintf("quartiles: %s\n", paste(q4, probs)))
+# Number of samples
+n = length(x)
 
-# Using the quantile() function to compute deciles
-probs = seq(0, 1, 0.1)
-q10 <- quantile(x, probs=probs, na.rm=FALSE)
-cat(sprintf("deciles: %s\n", paste(q10, probs)))
+# Sorted
+x <- sort(x)
+
+# Unique
+xu <- unique(x)
+
+# Frequency of each unique value in 'x'
+xf <- sapply(xu, function(vu) sum(x == vu))
+
+# Relative frequency of each unique value in 'x'
+xrf <- sapply(xu, function(vu) sum(x == vu)) / n
+
+# Cumulative frequency of each unique value in 'x'
+xcf <- cumsum(xf)
+
+# Cumulative relative frequency
+xcrf <- cumsum(xf) / n
+
+cat(sprintf("%s\n", paste('x =', xu, 'abs =', xf, 'rel =', xrf, 'cum =', xcf, 'crel =', xcrf, sep='\t')))
+
+# Percentage variability that encompass the value of interest
+prc = seq(0, 1, 0.25)
+
+# The position of the values of interest
+rk_prc = prc * n
 
 # opath <- 'plots/hist_quantiles.pdf'
 # pdf(opath)
 # hist(x, col='#00FF66', main=paste('Random sample with replacement, n =', n))
 # dev.off()
+
+# # Using the quantile() function to compute quartiles
+# probs = seq(0, 1, 0.25)
+# q4 <- quantile(x, probs=probs, na.rm=FALSE)
+# # cat(sprintf("quartiles: %s\n", paste(q4, probs)))
+#
+# # Using the quantile() function to compute deciles
+# probs = seq(0, 1, 0.1)
+# q10 <- quantile(x, probs=probs, na.rm=FALSE)
+# # cat(sprintf("deciles: %s\n", paste(q10, probs)))
