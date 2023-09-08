@@ -60,26 +60,41 @@ xcrf <- cumsum(xf) / n
 # QUANTILES
 # ==========================================================
 
+myquantile <- function(p){
+    tol = 1e-20
+    rk = as.double(p * n)
+    if(abs(p) < tol){
+        rk = 1
+    }
+
+    rk_base = trunc(rk)
+    rk_digits = as.double(rk - rk_base)
+
+    rk_next = rk_base + 1
+    if(abs(rk_digits) < tol){
+        rk_next = rk_base
+    }
+
+    res = as.double(x[rk_base] + rk_digits*(x[rk_next] - x[rk_base]))
+    return(res)
+}
+
 # First way to compute any quantile:
 # Look at the value of X at which the cumulative relative frequency distribution
 # passes the desired value (e.g., 0.05 or 5%)
-probs = seq(0, 1, by=0.05)
+probs = as.double(seq(0, 1, by=0.05))
 
 # NOTE: if we are using the cumulative distribution, then we need to extract
 # the value from the array of UNIQUE VALUES, not from 'x'!!
-q_approach1 = sapply(probs, function(p) xu[which.min(abs(xcrf-p))])
+q1 = sapply(probs, function(p) xu[which.min(abs(xcrf-p))])
 
 # Instead, for the second (and more precise) approach we can
-q_approach2 = sapply(seq(0.05, 1, by=0.05), function(p) x[n*p])
-q_approach2 = c(x[1], q_approach2)
+q2 = sapply(probs, function(p) myquantile(p))
 
 # Builtin function
 q <- quantile(x, probs=probs, na.rm=FALSE)
 
-cat(sprintf("%s\n",
-            paste('p =', probs, 'q1 =', q_approach1, 'q2 =', q_approach2, 'q =', q, sep='\t')
-    )
-)
+cat(sprintf("%s\n", paste('p =', probs, 'q1 =', q1, 'q2 =', q2, 'q =', q, sep='\t')))
 
 # ==========================================================
 # GRAPHS
