@@ -38,6 +38,10 @@ x <- sort(x)
 # Unique
 xu <- unique(x)
 
+# ==========================================================
+# DISTRIBUTIONS
+# ==========================================================
+
 # Frequency of each unique value in 'x'
 xf <- sapply(xu, function(vu) sum(x == vu))
 
@@ -52,41 +56,56 @@ xcrf <- cumsum(xf) / n
 
 # cat(sprintf("%s\n", paste('x =', round(xu, 2), 'abs =', xf, 'rel =', xrf, 'cum =', xcf, 'crel =', xcrf, sep='\t')))
 
-opath <- 'plots/combined_x.pdf'
-xf_ylim = c(0, round(max(xf)+5))
-xrf_ylim = c(0, max(xrf))
-xcf_ylim = c(0, round(max(xcf)))
-xcrf_ylim = c(0, ceiling(max(xcrf)))
+# ==========================================================
+# QUANTILES
+# ==========================================================
 
-pdf(opath, onefile=TRUE)
-par(mfrow=c(2, 2))
-# hist(x, col='#00FF66', main=paste('Absolute frequency (n =', n, ')'))
-# hist(x, col='#0066FF', main=paste('Relative frequency (n =', n, ')'), freq=FALSE)
-plot(xu, xf, cex=0.5, main=paste('Frequency (n =', n, ')'), xlab='X [units]', ylab='Frequency', ylim=xf_ylim, xaxs='i', yaxs='i')
-axis(1, at=xu)  # bottom axis
-axis(2, at=xf)  # left axis
-curve(n*dnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+# First way to compute any quantile:
+# Look at the value of X at which the cumulative relative frequency distribution
+# passes the desired value (e.g., 0.05 or 5%)
+probs = seq(0, 1, by=0.05)
 
-plot(xu, xrf, cex=0.5, main=paste('Relative frequency (n =', n, ')'), xlab='X [units]', ylab='Relative frequency', ylim=xrf_ylim)
-curve(dnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+# NOTE: if we are using the cumulative distribution, then we need to extract
+# the value from the array of UNIQUE VALUES, not from 'x'!!
+q_approach1 = sapply(probs, function(p) xu[which.min(abs(xcrf-p))])
 
-plot(xu, xcf, cex=0.5, main=paste('Cumulative frequency (n =', n, ')'), xlab='X [units]', ylab='Cumulative frequency', ylim=xcf_ylim)
-curve(n*pnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+# Instead, for the second (and more precise) approach we can
+q_approach2 = sapply(seq(0.05, 1, by=0.05), function(p) x[n*p])
+q_approach2 = c(x[1], q_approach2)
 
-plot(xu, xcrf, cex=0.5, main=paste('Relative cumulative frequency (n =', n, ')'), xlab='X [units]', ylab='Relative cumulative frequency', ylim=xcrf_ylim)
-curve(pnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+# Builtin function
+q <- quantile(x, probs=probs, na.rm=FALSE)
 
-dev.off()
+cat(sprintf("%s\n",
+            paste('p =', probs, 'q1 =', q_approach1, 'q2 =', q_approach2, 'q =', q, sep='\t')
+    )
+)
 
-# Rank of the data
-xrk <-rank(x)
+# ==========================================================
+# GRAPHS
+# ==========================================================
 
-# # Using the quantile() function to compute quartiles
-# probs = seq(0, 1, 0.25)
-# q4 <- quantile(x, probs=probs, na.rm=FALSE)
-# # cat(sprintf("quartiles: %s\n", paste(q4, probs)))
+# opath <- 'plots/combined_x.pdf'
+# xf_ylim = c(0, round(max(xf)+5))
+# xrf_ylim = c(0, max(xrf))
+# xcf_ylim = c(0, round(max(xcf)))
+# xcrf_ylim = c(0, ceiling(max(xcrf)))
 #
-# # Using the quantile() function to compute deciles
-# probs = seq(0, 1, 0.1)
-# q10 <- quantile(x, probs=probs, na.rm=FALSE)
-# # cat(sprintf("deciles: %s\n", paste(q10, probs)))
+# pdf(opath, onefile=TRUE)
+# par(mfrow=c(2, 2))
+#
+# plot(xu, xf, cex=0.5, main=paste('Frequency (n =', n, ')'), xlab='X [units]', ylab='Frequency', ylim=xf_ylim, xaxs='i', yaxs='i')
+# axis(1, at=xu)  # bottom axis
+# axis(2, at=xf)  # left axis
+# curve(n*dnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+#
+# plot(xu, xrf, cex=0.5, main=paste('Relative frequency (n =', n, ')'), xlab='X [units]', ylab='Relative frequency', ylim=xrf_ylim)
+# curve(dnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+#
+# plot(xu, xcf, cex=0.5, main=paste('Cumulative frequency (n =', n, ')'), xlab='X [units]', ylab='Cumulative frequency', ylim=xcf_ylim)
+# curve(n*pnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+#
+# plot(xu, xcrf, cex=0.5, main=paste('Relative cumulative frequency (n =', n, ')'), xlab='X [units]', ylab='Relative cumulative frequency', ylim=xcrf_ylim)
+# curve(pnorm(x, mean=mean(x), sd=sd(x)), add=TRUE, col='#FF6600', lty=2)
+#
+# dev.off()
