@@ -21,10 +21,19 @@ if(length(files_in) == 0){
 }
 
 # Process each file
-for(file in files_in){
-    fp = file.path(dir_in, file)
+for(fn in files_in){
+    fp = file.path(dir_in, fn)
 
+    # Read raw data
     data_raw <- readFastq(fp)
-    quality_stats <- quality(data_raw)
 
+    readlength <- width(data_raw)
+    indices <- which(readlength >= 23 & readlength < 31)
+    filtered_reads <- data_raw[indices]
+
+    fn_split <- strsplit(fn, "\\.")
+    fp_out <- file.path(dir_in, paste0(fn_split[[1]][1], "_filtered.", fn_split[[1]][2]))
+
+    # NOTE: need to set compress to FALSE!!!
+    writeFastq(filtered_reads, file = fp_out, full = TRUE, compress = FALSE, mode = "w")
 }
