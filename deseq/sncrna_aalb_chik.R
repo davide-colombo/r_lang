@@ -25,5 +25,6 @@ for(file in files_in){
     fp = file.path(dir_in, file)
 
     data_raw <- readFastq(fp)
+    quality_stats <- quality(data_raw)
 
 }
