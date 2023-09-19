@@ -7,37 +7,23 @@
 # Experiment Accession: SRX1163797
 # Run Accession: SRR2182471
 
-library(jsonlite)
-library(curl)
+library(ShortRead)
 
-dir_conf <- "./config"
-if(!dir.exists(dir_conf)){
-    stop("Error: missing configuration directory")
+# Input directory
+dir_in <- "./fastq"
+
+# Input files
+files_in <- list.files(dir_in, pattern = "\\.fastq")
+
+# Error
+if(length(files_in) == 0){
+    stop(sprintf("Error: no file found in %s\n", dir_in))
 }
 
-fn_jconf <- "conf.json"
-fp_jconf <- file.path(dir_conf, fn_jconf)
-if(!file.exists(fp_jconf)){
-    stop("Error: missing configuration file")
+# Process each file
+for(file in files_in){
+    fp = file.path(dir_in, file)
+
+    data_raw <- readFastq(fp)
+
 }
-
-# Read configuration from JSON file
-jconf <- fromJSON(fp_jconf)
-
-# URL for FTP transfer
-fq_url <- paste("ftp:", jconf$fastq_ftp, sep = "//")
-print(fq_url)
-
-# # Open connection
-# con <- curl(url = fq_url, "r", handle = new_handle())
-#
-# # Streaming lines
-# for(i in 1:10){
-#
-#     # Read line
-#     line <- readLines(con, n = 1)
-#
-#     # Process line
-# }
-#
-# close(con)
