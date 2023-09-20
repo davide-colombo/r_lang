@@ -37,18 +37,39 @@ for(fn in files_in){
     fastq_dt[, ReadLen := nchar(Sequence)]
     print(head(fastq_dt))
 
-    nbins = length(unique(fastq_dt$ReadLen))
-    hist_readlen <- ggplot(fastq_dt, aes(x = ReadLen)) +
-        geom_histogram(bins = nbins, fill = "blue", color = "orange") +
-        geom_density(aes(y = after_stat(density)), fill = "red", alpha = 0.5) +
-        labs(title = "Read length distribution",
-             x = "Read length",
-             y = "Frequency")
-
-    fp_oplot <- file.path("./plot", "hist_readlen.pdf")
-    pdf(fp_oplot, onefile = TRUE)
-    print(hist_readlen)
-    dev.off()
+    # # Sample mean of the read length
+    # readlen_mean <- mean(fastq_dt$ReadLen)
+    #
+    # # Sample standard deviation of read lenght
+    # readlen_sd <- sd(fastq_dt$ReadLen)
+    #
+    # readlen_min <- min(fastq_dt$ReadLen)
+    #
+    # readlen_max <- max(fastq_dt$ReadLen)
+    #
+    # readlen_sample_xdata <- seq(readlen_min, readlen_max, 1)
+    # readlen_expected_normal_distribution_xdata <- rnorm(1000, mean = readlen_mean, sd = readlen_sd)
+    # readlen_expected_normal_distribution_ydata <- dnorm(readlen_expected_normal_distribution_xdata, mean = readlen_mean, sd = readlen_sd)
+    #
+    # readlen_expected_normal_distribution_dt <- data.frame(x = readlen_expected_normal_distribution_xdata,
+    #                                                       y = readlen_expected_normal_distribution_ydata)
+    #
+    # # Number of bins
+    # readlen_hist_nbins = length(unique(fastq_dt$ReadLen))
+    # readlen_hist <- ggplot(fastq_dt, aes(x = ReadLen)) +
+    #     geom_line(data = readlen_expected_normal_distribution_dt, aes(x = x, y = y), color = "#FF6666", linewidth = 1) +
+    #     # geom_histogram(bins = readlen_hist_nbins, fill = "blue", color = "black") +
+    #     labs(title = "Read length distribution",
+    #          x = "Read length",
+    #          y = "Frequency")
+    #
+    # # readlen_hist <- readlen_hist +
+    #
+    #
+    # fp_oplot <- file.path("./plots", "hist_readlen.pdf")
+    # pdf(fp_oplot, onefile = TRUE)
+    # print(readlen_hist)
+    # dev.off()
 
     # fn_split <- strsplit(fn, "\\.")
     # fp_out <- file.path(dir_in, paste0(fn_split[[1]][1], "_filtered.", fn_split[[1]][2]))
