@@ -7,9 +7,21 @@
 # Experiment Accession: SRX1163797
 # Run Accession: SRR2182471
 
+library(stringr)
 library(microseq)
 library(data.table)
 library(ggplot2)
+
+# Compute the GC percentage
+get_gc_perc <- function(myseq){
+    gc_count <- str_count(myseq, "C") + str_count(myseq, "G")
+    gc_perc <- (gc_count / nchar(myseq)) * 100
+    return(gc_perc)
+}
+
+# ==============================================================================
+# CODE STARTS HERE
+# ==============================================================================
 
 # Input directory
 dir_in <- "./fastq"
@@ -35,6 +47,10 @@ for(fn in files_in){
 
     # Add read length column
     fastq_dt[, ReadLen := nchar(Sequence)]
+    print(head(fastq_dt))
+
+    # Add GC content column
+    fastq_dt[, GCPerc := get_gc_perc(Sequence), by = Sequence]
     print(head(fastq_dt))
 
     # # Sample mean of the read length
