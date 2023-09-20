@@ -1,2 +1,5 @@
 # Ignore fastq directory
 fastq/
+
+# Ignore plots/ directory
+plots/

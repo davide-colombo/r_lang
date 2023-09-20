@@ -9,6 +9,7 @@
 
 library(microseq)
 library(data.table)
+library(ggplot2)
 
 # Input directory
 dir_in <- "./fastq"
@@ -27,9 +28,27 @@ for(fn in files_in){
 
     # Read raw fastq file
     fastq_raw <- microseq::readFastq(fp)
+    print(head(fastq_raw))
 
     # Convert to data.table
     fastq_dt <- as.data.table(fastq_raw)
+
+    # Add read length column
+    fastq_dt[, ReadLen := nchar(Sequence)]
+    print(head(fastq_dt))
+
+    nbins = length(unique(fastq_dt$ReadLen))
+    hist_readlen <- ggplot(fastq_dt, aes(x = ReadLen)) +
+        geom_histogram(bins = nbins, fill = "blue", color = "orange") +
+        geom_density(aes(y = after_stat(density)), fill = "red", alpha = 0.5) +
+        labs(title = "Read length distribution",
+             x = "Read length",
+             y = "Frequency")
+
+    fp_oplot <- file.path("./plot", "hist_readlen.pdf")
+    pdf(fp_oplot, onefile = TRUE)
+    print(hist_readlen)
+    dev.off()
 
     # fn_split <- strsplit(fn, "\\.")
     # fp_out <- file.path(dir_in, paste0(fn_split[[1]][1], "_filtered.", fn_split[[1]][2]))
