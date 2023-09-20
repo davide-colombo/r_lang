@@ -7,7 +7,8 @@
 # Experiment Accession: SRX1163797
 # Run Accession: SRR2182471
 
-library(ShortRead)
+library(microseq)
+library(data.table)
 
 # Input directory
 dir_in <- "./fastq"
@@ -24,16 +25,15 @@ if(length(files_in) == 0){
 for(fn in files_in){
     fp = file.path(dir_in, fn)
 
-    # Read raw data
-    data_raw <- readFastq(fp)
+    # Read raw fastq file
+    fastq_raw <- microseq::readFastq(fp)
 
-    readlength <- width(data_raw)
-    indices <- which(readlength >= 23 & readlength < 31)
-    filtered_reads <- data_raw[indices]
+    # Convert to data.table
+    fastq_dt <- as.data.table(fastq_raw)
 
-    fn_split <- strsplit(fn, "\\.")
-    fp_out <- file.path(dir_in, paste0(fn_split[[1]][1], "_filtered.", fn_split[[1]][2]))
+    # fn_split <- strsplit(fn, "\\.")
+    # fp_out <- file.path(dir_in, paste0(fn_split[[1]][1], "_filtered.", fn_split[[1]][2]))
 
     # NOTE: need to set compress to FALSE!!!
-    writeFastq(filtered_reads, file = fp_out, full = TRUE, compress = FALSE, mode = "w")
+    # writeFastq(filtered_reads, file = fp_out, full = TRUE, compress = FALSE, mode = "w")
 }
