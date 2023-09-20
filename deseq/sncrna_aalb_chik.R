@@ -7,21 +7,9 @@
 # Experiment Accession: SRX1163797
 # Run Accession: SRR2182471
 
-library(stringr)
-library(microseq)
-library(data.table)
-library(ggplot2)
-
-# Compute the GC percentage
-get_gc_perc <- function(myseq){
-    gc_count <- str_count(myseq, "C") + str_count(myseq, "G")
-    gc_perc <- (gc_count / nchar(myseq)) * 100
-    return(gc_perc)
-}
-
-# ==============================================================================
-# CODE STARTS HERE
-# ==============================================================================
+library(ShortRead)      # FastQ files manipulation
+library(Biostrings)     # DNASequence manipulation
+library(ggplot2)        # Graphs
 
 # Input directory
 dir_in <- "./fastq"
@@ -38,55 +26,60 @@ if(length(files_in) == 0){
 for(fn in files_in){
     fp = file.path(dir_in, fn)
 
+    # ==========================================================================
     # Read raw fastq file
-    fastq_raw <- microseq::readFastq(fp)
+    # ==========================================================================
+    fastq_raw <- readFastq(fp)
     print(head(fastq_raw))
 
-    # Convert to data.table
-    fastq_dt <- as.data.table(fastq_raw)
+    # ==========================================================================
+    # Read length
+    # ==========================================================================
+    read_lengths <- width(fastq_raw)
 
-    # Add read length column
-    fastq_dt[, ReadLen := nchar(Sequence)]
-    print(head(fastq_dt))
+    # ==========================================================================
+    # Draw read length distribution...
+    # ==========================================================================
+    # Create a data frame
+    df <- data.frame(Length = read_lengths)
+    nbins <- length(unique(df$Length))
 
-    # Add GC content column
-    fastq_dt[, GCPerc := get_gc_perc(Sequence), by = Sequence]
-    print(head(fastq_dt))
+    # Create the histogram
+    histogram <- ggplot(df, aes(x = Length)) +
+        geom_histogram(bins = nbins, color = "black", fill = "blue") +
+        labs(x = "Read Length", y = "Frequency", title = "Frequency Distribution of Read Lengths") +
+        theme_minimal()
 
-    # # Sample mean of the read length
-    # readlen_mean <- mean(fastq_dt$ReadLen)
-    #
-    # # Sample standard deviation of read lenght
-    # readlen_sd <- sd(fastq_dt$ReadLen)
-    #
-    # readlen_min <- min(fastq_dt$ReadLen)
-    #
-    # readlen_max <- max(fastq_dt$ReadLen)
-    #
-    # readlen_sample_xdata <- seq(readlen_min, readlen_max, 1)
-    # readlen_expected_normal_distribution_xdata <- rnorm(1000, mean = readlen_mean, sd = readlen_sd)
-    # readlen_expected_normal_distribution_ydata <- dnorm(readlen_expected_normal_distribution_xdata, mean = readlen_mean, sd = readlen_sd)
-    #
-    # readlen_expected_normal_distribution_dt <- data.frame(x = readlen_expected_normal_distribution_xdata,
-    #                                                       y = readlen_expected_normal_distribution_ydata)
-    #
-    # # Number of bins
-    # readlen_hist_nbins = length(unique(fastq_dt$ReadLen))
-    # readlen_hist <- ggplot(fastq_dt, aes(x = ReadLen)) +
-    #     geom_line(data = readlen_expected_normal_distribution_dt, aes(x = x, y = y), color = "#FF6666", linewidth = 1) +
-    #     # geom_histogram(bins = readlen_hist_nbins, fill = "blue", color = "black") +
-    #     labs(title = "Read length distribution",
-    #          x = "Read length",
-    #          y = "Frequency")
-    #
-    # # readlen_hist <- readlen_hist +
-    #
-    #
-    # fp_oplot <- file.path("./plots", "hist_readlen.pdf")
-    # pdf(fp_oplot, onefile = TRUE)
-    # print(readlen_hist)
-    # dev.off()
+    # histogram <- hist(read_lengths, breaks = 20, col = "blue", main = "Frequency Distribution of Read Lengths", xlab = "Read Length", ylab = "Frequency")
+    pdf( file.path("./plots", "histogram_read_lengths.pdf"), onefile = TRUE)
+    print(histogram)
+    dev.off()
 
+    # ==========================================================================
+    # Compute GC content
+    # ==========================================================================
+    gc_perc <- rowSums( letterFrequency(sread(fastq_raw), letters = c("G", "C")) ) / read_lengths * 100
+
+    # ==========================================================================
+    # Draw the distribution of GC content...
+    # ==========================================================================
+    # Convert to data frame
+    df <- data.frame(Sequence = sread(fastq_raw))
+    df$GCPerc <- gc_perc
+    print(head(df))
+
+    histogram <- ggplot(df, aes(x=GCPerc)) +
+        geom_histogram(binwidth = 3, fill="steelblue", color="black") +
+        labs(title="Frequency Distribution of GC Content", x="GC Content (%)", y="Frequency") +
+        theme_minimal()
+
+    pdf( file.path("./plots", "barplot_gc_perc.pdf"), onefile = TRUE )
+    print(histogram)
+    dev.off()
+
+    # ==========================================================================
+    # Write content to a file
+    # ==========================================================================
     # fn_split <- strsplit(fn, "\\.")
     # fp_out <- file.path(dir_in, paste0(fn_split[[1]][1], "_filtered.", fn_split[[1]][2]))
 
