@@ -37,6 +37,10 @@ for(fn in files_in){
     # ==========================================================================
     read_lengths <- width(fastq_raw)
 
+    # Percent duplicates
+    dup_perc <- length(unique(sread(fastq_raw))) / length(sread(fastq_raw)) * 100
+    cat(sprintf("percentage duplicate = %.3f %%", dup_perc))
+
     # ==========================================================================
     # Draw read length distribution...
     # ==========================================================================
