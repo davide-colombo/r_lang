@@ -39,7 +39,27 @@ for(fn in files_in){
 
     # Percent duplicates
     dup_perc <- length(unique(sread(fastq_raw))) / length(sread(fastq_raw)) * 100
-    cat(sprintf("percentage duplicate = %.3f %%", dup_perc))
+    cat(sprintf("percentage duplicate = %.3f %%\n", dup_perc))
+
+
+    # Unique sequences
+    unique_reads <- unique(sread(fastq_raw))
+    df <- data.frame(Reads = unique_reads,
+                     Length = width(unique_reads))
+    print(head(df))
+
+    tot_unique_reads = nrow(df)
+    seq_length <- seq(from = 21, to = 30, by = 1)
+    cumulative_nreads_per_len <- vector(mode = "integer", length = 0)
+    cum_sum <- 0
+    for(sl in seq_length){
+        tmp <- sum(df$Length == sl)
+        cum_sum <- cum_sum + tmp
+        cumulative_nreads_per_len <- c(cumulative_nreads_per_len, cum_sum)
+        cat(sprintf("#Number of unique sequences of length %d = %d (%.4f%% of total)\n", sl, tmp, tmp/tot_unique_reads*100))
+    }
+
+    print(cumulative_nreads_per_len)
 
     # ==========================================================================
     # Draw read length distribution...
