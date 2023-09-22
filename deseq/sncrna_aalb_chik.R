@@ -9,6 +9,7 @@
 
 library(ShortRead)      # FastQ files manipulation
 library(Biostrings)     # DNASequence manipulation
+library(data.table)     # Efficient manipulation of data
 library(ggplot2)        # Graphs
 
 # Input directory
@@ -30,76 +31,90 @@ for(fn in files_in){
     # Read raw fastq file
     # ==========================================================================
     fastq_raw <- readFastq(fp)
-    print(head(fastq_raw))
+    # print(head(fastq_raw))
 
-    # ==========================================================================
-    # Read length
-    # ==========================================================================
-    read_lengths <- width(fastq_raw)
+    # Reads
+    reads_raw <- sread(fastq_raw)
 
-    # Percent duplicates
-    dup_perc <- length(unique(sread(fastq_raw))) / length(sread(fastq_raw)) * 100
-    cat(sprintf("percentage duplicate = %.3f %%\n", dup_perc))
+    # Data.table much better to do computations
+    dt <- data.table(Reads = as.character(reads_raw))
+    print(dt)
+    dt <- dt[, .(Count = .N), by = Reads][order(-Count)]
+    print(dt)
+    dt <- dt[, .(Reads, Count, Length = nchar(Reads))]
+    print(dt)
 
+    # Unique reads
+    # reads_unique <- unique(reads_raw)
 
     # Unique sequences
-    unique_reads <- unique(sread(fastq_raw))
-    df <- data.frame(Reads = unique_reads,
-                     Length = width(unique_reads))
-    print(head(df))
+    # df <- data.frame(Reads = reads_unique,
+    #                  Length = width(reads_unique))
 
-    tot_unique_reads = nrow(df)
-    seq_length <- seq(from = 21, to = 30, by = 1)
-    cumulative_nreads_per_len <- vector(mode = "integer", length = 0)
-    cum_sum <- 0
-    for(sl in seq_length){
-        tmp <- sum(df$Length == sl)
-        cum_sum <- cum_sum + tmp
-        cumulative_nreads_per_len <- c(cumulative_nreads_per_len, cum_sum)
-        cat(sprintf("#Number of unique sequences of length %d = %d (%.4f%% of total)\n", sl, tmp, tmp/tot_unique_reads*100))
-    }
 
-    print(cumulative_nreads_per_len)
+    # Frequency distribution and cumulative distribution
+    # tot_unique_reads = nrow(df)
+    # seq_length <- seq(from = 21, to = 30, by = 1)
+    # cumulative_nreads_per_len <- vector(mode = "integer", length = 0)
+    # cum_sum <- 0
+    # for(sl in seq_length){
+    #     tmp <- sum(df$Length == sl)
+    #     cum_sum <- cum_sum + tmp
+    #     cumulative_nreads_per_len <- c(cumulative_nreads_per_len, cum_sum)
+    #     cat(sprintf("#Number of unique sequences of length %d = %d (%.4f%% of total)\n", sl, tmp, tmp/tot_unique_reads*100))
+    # }
+    #
+    # print(cumulative_nreads_per_len)
+    #
+    # # Percent duplicates
+    # dup_perc <- length(reads_unique) / length(reads_raw) * 100
+    # cat(sprintf("percentage duplicate = %.3f %%\n", dup_perc))
+
+    # Percentage of duplication level for each unique sequence
+
 
     # ==========================================================================
     # Draw read length distribution...
     # ==========================================================================
     # Create a data frame
-    df <- data.frame(Length = read_lengths)
-    nbins <- length(unique(df$Length))
 
-    # Create the histogram
-    histogram <- ggplot(df, aes(x = Length)) +
-        geom_histogram(bins = nbins, color = "black", fill = "blue") +
-        labs(x = "Read Length", y = "Frequency", title = "Frequency Distribution of Read Lengths") +
-        theme_minimal()
-
-    # histogram <- hist(read_lengths, breaks = 20, col = "blue", main = "Frequency Distribution of Read Lengths", xlab = "Read Length", ylab = "Frequency")
-    pdf( file.path("./plots", "histogram_read_lengths.pdf"), onefile = TRUE)
-    print(histogram)
-    dev.off()
+    # df <- data.frame(Length = read_lengths)
+    # nbins <- length(unique(df$Length))
+    #
+    # # Create the histogram
+    # histogram <- ggplot(df, aes(x = Length)) +
+    #     geom_histogram(bins = nbins, color = "black", fill = "blue") +
+    #     labs(x = "Read Length", y = "Frequency", title = "Frequency Distribution of Read Lengths") +
+    #     theme_minimal()
+    #
+    # # histogram <- hist(read_lengths, breaks = 20, col = "blue", main = "Frequency Distribution of Read Lengths", xlab = "Read Length", ylab = "Frequency")
+    # pdf( file.path("./plots", "histogram_read_lengths.pdf"), onefile = TRUE)
+    # print(histogram)
+    # dev.off()
 
     # ==========================================================================
     # Compute GC content
     # ==========================================================================
-    gc_perc <- rowSums( letterFrequency(sread(fastq_raw), letters = c("G", "C")) ) / read_lengths * 100
+    reads_length <- width(fastq_raw)
+    gc_perc <- rowSums( letterFrequency(reads_raw, letters = c("G", "C")) ) / reads_length * 100
 
     # ==========================================================================
     # Draw the distribution of GC content...
     # ==========================================================================
     # Convert to data frame
-    df <- data.frame(Sequence = sread(fastq_raw))
-    df$GCPerc <- gc_perc
-    print(head(df))
 
-    histogram <- ggplot(df, aes(x=GCPerc)) +
-        geom_histogram(binwidth = 3, fill="steelblue", color="black") +
-        labs(title="Frequency Distribution of GC Content", x="GC Content (%)", y="Frequency") +
-        theme_minimal()
-
-    pdf( file.path("./plots", "barplot_gc_perc.pdf"), onefile = TRUE )
-    print(histogram)
-    dev.off()
+    # df <- data.frame(Sequence = sread(fastq_raw))
+    # df$GCPerc <- gc_perc
+    # print(head(df))
+    #
+    # histogram <- ggplot(df, aes(x=GCPerc)) +
+    #     geom_histogram(binwidth = 3, fill="steelblue", color="black") +
+    #     labs(title="Frequency Distribution of GC Content", x="GC Content (%)", y="Frequency") +
+    #     theme_minimal()
+    #
+    # pdf( file.path("./plots", "barplot_gc_perc.pdf"), onefile = TRUE )
+    # print(histogram)
+    # dev.off()
 
     # ==========================================================================
     # Write content to a file
