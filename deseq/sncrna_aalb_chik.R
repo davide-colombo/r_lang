@@ -10,6 +10,7 @@
 library(ShortRead)      # FastQ files manipulation
 library(Biostrings)     # DNASequence manipulation
 library(data.table)     # Efficient manipulation of data
+library(stringr)        # str_count() function
 library(ggplot2)        # Graphs
 
 # Input directory
@@ -36,13 +37,23 @@ for(fn in files_in){
     # Reads
     reads_raw <- sread(fastq_raw)
 
+    # Length of sequences
+    reads_length <- width(fastq_raw)
+
+    # GC content
+    gc_freq <- rowSums( letterFrequency(reads_raw, letters = c("G", "C")) )
+    gc_perc <- gc_freq / reads_length * 100
+
     # Data.table much better to do computations
-    dt <- data.table(Reads = as.character(reads_raw))
-    print(dt)
-    dt <- dt[, .(Count = .N), by = Reads][order(-Count)]
-    print(dt)
-    dt <- dt[, .(Reads, Count, Length = nchar(Reads))]
-    print(dt)
+    dt <- data.table(Reads = as.character(reads_raw),
+                     Length = reads_length,
+                     GCFreq = gc_freq,
+                     GCPerc = gc_perc)
+    dt_raw <- dt[, .(Length, GCFreq, GCPerc, NCopies = .N), by = Reads][order(-NCopies)]
+
+    # Filter out duplicated rows
+    dt_unique <- unique(dt_raw)
+    print(dt_unique)
 
     # Unique reads
     # reads_unique <- unique(reads_raw)
@@ -95,8 +106,7 @@ for(fn in files_in){
     # ==========================================================================
     # Compute GC content
     # ==========================================================================
-    reads_length <- width(fastq_raw)
-    gc_perc <- rowSums( letterFrequency(reads_raw, letters = c("G", "C")) ) / reads_length * 100
+
 
     # ==========================================================================
     # Draw the distribution of GC content...
