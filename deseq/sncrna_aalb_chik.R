@@ -39,6 +39,15 @@ for(fn in files_in){
     # Reads length
     reads_length <- width(fastq_raw)
 
+    # Reads quality
+    reads_qual <- quality(fastq_raw)
+
+    phred_score <- as(reads_qual, "matrix")
+
+    dt_qual <- data.table(PhredMean = colMeans(phred_score, na.rm = TRUE),
+                          NReads = colSums(!is.na(phred_score)))
+    print(dt_qual)
+
     # GC content
     gc_freq <- rowSums( letterFrequency(reads_raw, letters = c("G", "C")) )
     gc_perc <- gc_freq / reads_length * 100
