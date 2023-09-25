@@ -47,6 +47,16 @@ for(fn in files_in){
     # Convert ASCII to character
     phred_score <- as(reads_qual, "matrix")
 
+    # To understand how many NA values
+    # However, NA values are just due to the fact that reads have different lengths
+    reads_phred_na <- rowSums(is.na(phred_score))
+    reads_len <- rowSums(!is.na(phred_score))
+    correct <- all(reads_len == reads_length)
+    if(!correct){
+        stop("Reads have inconsistent lengths!!")
+    }
+
+
     # Data.table object
     dt_qual <- data.table(PhredMean = colMeans(phred_score, na.rm = TRUE),
                           NReads = colSums(!is.na(phred_score)))
@@ -63,6 +73,37 @@ for(fn in files_in){
 
     pdf( file.path("./plots", "reads_phred_per_base.pdf"), onefile = TRUE)
     print(plot_phred)
+    dev.off()
+
+    # ==========================================================================
+    # Per read mean Phred score
+    # ==========================================================================
+    dt_reads_phred <- data.table(PhredMean = rowMeans(phred_score, na.rm = TRUE))
+
+    plot_phred_seq <- ggplot(dt_reads_phred, aes(x = PhredMean)) +
+        geom_histogram(binwidth = 1, fill = "#FF6600", color = "#121212", alpha = 0.3) +
+        ylim(0, NA) + xlim(0, NA) +
+        labs(x = "Phred score", y = "Frequency",
+             title = "Per sequence base quality, Sanger scale") +
+        theme_minimal()
+
+    pdf( file.path("./plots", "reads_phred_per_sequence_hist.pdf"), onefile = TRUE)
+    print(plot_phred_seq)
+    dev.off()
+
+    # ==========================================================================
+    # Same plot as above but with geom_line()
+    # ==========================================================================
+    dt_reads_phred <- dt_reads_phred[, .(Count = .N), by = PhredMean][order(Count)]
+
+    plot_reads_phred_line <- ggplot(dt_reads_phred) +
+        geom_line(aes(x = PhredMean, y = Count), color = "#FF6600") +
+        labs(x = "Per sequence mean Phred score", y = "Frequency",
+             title = "Per sequence mean Phred score") +
+        theme_minimal()
+
+    pdf( file.path("./plots", "reads_phred_per_sequence_line.pdf"), onefile = TRUE)
+    print(plot_reads_phred_line)
     dev.off()
 
     # ==========================================================================
