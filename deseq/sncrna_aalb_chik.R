@@ -96,16 +96,16 @@ for(fn in files_in){
 
     dt_rnas_gc_stats <- dt_filt[, .(Mean = mean(GCFreq), SD = sd(GCFreq)) ]
 
-    dt_rnas_ecdf <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf = ecdf(GCFreq)(GCFreq))]
+    dt_rnas <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf = ecdf(GCFreq)(GCFreq))]
     # print(dt_rnas_ecdf)
 
-    dt_rnas_gc_dist <- dt_rnas_ecdf[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf, GCtcdf = pnorm(GCFreq, mean = dt_rnas_gc_stats$Mean, sd = dt_rnas_gc_stats$SD))]
+    dt_rnas <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf, GCtcdf = pnorm(GCFreq, mean = dt_rnas_gc_stats$Mean, sd = dt_rnas_gc_stats$SD))]
     # print(dt_rnas_gc_dist)
 
-    dt_rnas_gc_dev <- dt_rnas_gc_dist[, .(GCDevAbs = abs(GCecdf - GCtcdf))]
-    print(dt_rnas_gc_dev)
+    dt_rnas <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf, GCtcdf, GCDevAbs = abs(GCecdf - GCtcdf))]
+    print(dt_rnas)
 
-    t_test_res <- t.test(dt_rnas_gc_dev$GCDevAbs, mu = 0)
+    t_test_res <- t.test(dt_rnas$GCDevAbs, mu = 0)
     print(t_test_res)
 
     # ==========================================================================
@@ -188,6 +188,21 @@ for(fn in files_in){
 
     pdf( file.path("./plots", "rnas_gc_violin.pdf"), onefile = TRUE )
     print(violin_rna_gc)
+    dev.off()
+
+    # ==========================================================================
+    # GC percentage cumulative distribution
+    # ==========================================================================
+    plot_gc_cdf <- ggplot(dt_rnas) +
+        geom_line(aes(x = GCFreq, y = GCecdf), color = "blue") +
+        geom_line(aes(x = GCFreq, y = GCtcdf), color = "red") +
+        labs(x = "GC Frequency", y = "Empirical CDF VS Theoretical CDF",
+             title = "Empirical vs Theoretical CDF of GC content, short ncRNAs",
+             subtitle = "Blue: Empirical, Red: Theoretical") +
+        theme_minimal()
+
+    pdf( file.path("./plots", "rna_gc_cdf.pdf"), onefile = TRUE)
+    print(plot_gc_cdf)
     dev.off()
 
     # ==========================================================================
