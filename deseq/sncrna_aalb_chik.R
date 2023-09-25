@@ -72,47 +72,33 @@ for(fn in files_in){
     dt_pirna <- dt[Length > 23 & Length < 31]
     print(dt_pirna)
 
-
-
-    # Frequency distribution and cumulative distribution
-    # tot_unique_reads = nrow(df)
-    # seq_length <- seq(from = 21, to = 30, by = 1)
-    # cumulative_nreads_per_len <- vector(mode = "integer", length = 0)
-    # cum_sum <- 0
-    # for(sl in seq_length){
-    #     tmp <- sum(df$Length == sl)
-    #     cum_sum <- cum_sum + tmp
-    #     cumulative_nreads_per_len <- c(cumulative_nreads_per_len, cum_sum)
-    #     cat(sprintf("#Number of unique sequences of length %d = %d (%.4f%% of total)\n", sl, tmp, tmp/tot_unique_reads*100))
-    # }
-    #
-    # print(cumulative_nreads_per_len)
-    #
-    # # Percent duplicates
-    # dup_perc <- length(reads_unique) / length(reads_raw) * 100
-    # cat(sprintf("percentage duplicate = %.3f %%\n", dup_perc))
-
-    # Percentage of duplication level for each unique sequence
-
-
     # ==========================================================================
     # Draw read length distribution...
     # ==========================================================================
-    # Create a data frame
 
-    # df <- data.frame(Length = read_lengths)
-    # nbins <- length(unique(df$Length))
-    #
-    # # Create the histogram
-    # histogram <- ggplot(df, aes(x = Length)) +
-    #     geom_histogram(bins = nbins, color = "black", fill = "blue") +
-    #     labs(x = "Read Length", y = "Frequency", title = "Frequency Distribution of Read Lengths") +
-    #     theme_minimal()
-    #
-    # # histogram <- hist(read_lengths, breaks = 20, col = "blue", main = "Frequency Distribution of Read Lengths", xlab = "Read Length", ylab = "Frequency")
-    # pdf( file.path("./plots", "histogram_read_lengths.pdf"), onefile = TRUE)
-    # print(histogram)
-    # dev.off()
+    # siRNAs
+    nbins <- nrow(dt_sirna[, .N, by = Length])
+    hist_sirna <- ggplot(dt_sirna, aes(x = Length)) +
+        geom_histogram(bins = nbins, color = "black", fill = "blue") +
+        labs(x = "Read Length", y = "Frequency", title = "Frequency Distribution of Read Lengths - small interfering RNAs") +
+        theme_minimal()
+
+    # histogram <- hist(read_lengths, breaks = 20, col = "blue", main = "Frequency Distribution of Read Lengths", xlab = "Read Length", ylab = "Frequency")
+    pdf( file.path("./plots", "sirna_length_distribution.pdf"), onefile = TRUE)
+    print(hist_sirna)
+    dev.off()
+
+    # piRNAs
+    nbins <- nrow(dt_pirna[, .N, by = Length])
+    hist_pirna <- ggplot(dt_pirna, aes(x = Length)) +
+        geom_histogram(bins = nbins, color = "black", fill = "blue") +
+        labs(x = "Read Length", y = "Frequency", title = "Frequency Distribution of Read Lengths - PIWI-interacting RNAs") +
+        theme_minimal()
+
+    # histogram <- hist(read_lengths, breaks = 20, col = "blue", main = "Frequency Distribution of Read Lengths", xlab = "Read Length", ylab = "Frequency")
+    pdf( file.path("./plots", "pirna_length_distribution.pdf"), onefile = TRUE)
+    print(hist_pirna)
+    dev.off()
 
     # ==========================================================================
     # Compute GC content
