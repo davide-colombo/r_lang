@@ -24,20 +24,19 @@ if(length(files_in) == 0){
     stop(sprintf("Error: no file found in %s\n", dir_in))
 }
 
-# Process each file
+# Process each FastQ file
 for(fn in files_in){
     fp = file.path(dir_in, fn)
 
     # ==========================================================================
-    # Read raw fastq file
+    # Read raw FastQ file
     # ==========================================================================
     fastq_raw <- readFastq(fp)
-    # print(head(fastq_raw))
 
     # Reads
     reads_raw <- sread(fastq_raw)
 
-    # Length of sequences
+    # Reads length
     reads_length <- width(fastq_raw)
 
     # GC content
@@ -55,22 +54,22 @@ for(fn in files_in){
 
     # Count number of sequences longer than 30 nucleotides
     dt_longer <- dt[Length > 30, .(Count = .N, Perc = .N / nrow(dt) * 100)]
-    print(dt_longer)
+    # print(dt_longer)
 
     # These occupy just a small fraction of the reads, it can be due to artifacts in the library
     # for example capturing or purification
 
     # Filter out sequences longer than 30 nucleotides
     dt_filtered <- dt[Length < 31]
-    print(dt_filtered)
+    # print(dt_filtered)
 
     # Small interfering RNAs
     dt_sirna <- dt[Length > 18 & Length < 24]
-    print(dt_sirna)
+    # print(dt_sirna)
 
     # PIWI-interacting RNAs
     dt_pirna <- dt[Length > 23 & Length < 31]
-    print(dt_pirna)
+    # print(dt_pirna)
 
     # ==========================================================================
     # Draw read length distribution...
@@ -101,13 +100,20 @@ for(fn in files_in){
     dev.off()
 
     # ==========================================================================
-    # Compute GC content
-    # ==========================================================================
-
-
-    # ==========================================================================
     # Draw the distribution of GC content...
     # ==========================================================================
+
+    # siRNAs
+    hist_sirna_gc <- ggplot(dt_sirna, aes(x=GCPerc)) +
+        geom_histogram(bins = 20, fill="steelblue", color="black") +
+        labs(title="Frequency Distribution of GC Content, small interfering RNAs", x="GC Content (%)", y="Frequency") +
+        theme_minimal()
+
+    pdf( file.path("./plots", "sirna_gc_distribution.pdf"), onefile = TRUE )
+    print(hist_sirna_gc)
+    dev.off()
+
+    # piRNas
     hist_pirna_gc <- ggplot(dt_pirna, aes(x=GCPerc)) +
         geom_histogram(bins = 20, fill="steelblue", color="black") +
         labs(title="Frequency Distribution of GC Content, PIWI-interacting RNAs", x="GC Content (%)", y="Frequency") +
