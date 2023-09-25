@@ -60,8 +60,25 @@ for(fn in files_in){
     # for example capturing or purification
 
     # Filter out sequences longer than 30 nucleotides
-    dt_filtered <- dt[Length < 31]
+    dt_filt <- dt[Length < 31]
     # print(dt_filtered)
+
+    # Count duplicates on filtered reads
+    dt_dups_filt <- unique(dt_filt[, .(Length, GCFreq, GCPerc, NCopies = .N), by = Reads][order(-NCopies)])
+    # print(dt_dups_filt)
+
+    # Count number of sequences with more than 10 duplicates
+    dt_dups_filt_more10copies <- dt_dups_filt[NCopies > 10, .(Count = .N, Perc = .N / nrow(dt_dups_filt) * 100)]
+    print(dt_dups_filt_more10copies)
+
+    dt_dups_filt_more100copies <- dt_dups_filt[NCopies > 100, .(Count = .N, Perc = .N / nrow(dt_dups_filt) * 100)]
+    print(dt_dups_filt_more100copies)
+
+    dt_dups_filt_more1000copies <- dt_dups_filt[NCopies > 1000, .(Count = .N, Perc = .N / nrow(dt_dups_filt) * 100)]
+    print(dt_dups_filt_more1000copies)
+
+    dt_dups_filt_more10000copies <- dt_dups_filt[NCopies > 10000, .(Count = .N, Perc = .N / nrow(dt_dups_filt) * 100)]
+    print(dt_dups_filt_more10000copies)
 
     # Small interfering RNAs
     dt_sirna <- dt[Length > 18 & Length < 24]
