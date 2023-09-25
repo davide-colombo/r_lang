@@ -89,6 +89,12 @@ for(fn in files_in){
     print(dt_filt_gc_mean)
 
     # ==========================================================================
+    # RNA species column
+    # ==========================================================================
+    dt_rnas <- dt_filt[, .(Reads, Length, GCFreq, GCPerc, RNAType = ifelse(Length > 18 & Length < 24, "si", "pi"))]
+    print(dt_rnas)
+
+    # ==========================================================================
     # Small interfering RNAs
     # ==========================================================================
     dt_sirna <- dt[Length > 18 & Length < 24]
@@ -156,6 +162,18 @@ for(fn in files_in){
 
     pdf( file.path("./plots", "pirna_gc_distribution.pdf"), onefile = TRUE )
     print(hist_pirna_gc)
+    dev.off()
+
+    # ==========================================================================
+    # GC percentage violin plot piRNA
+    # ==========================================================================
+    violin_rna_gc <- ggplot(dt_rnas, aes(x=RNAType, y=GCPerc, fill=RNAType)) +
+        geom_violin(adjust=2) +
+        labs(title="Violin plot of GC content (%): siRNAs VS piRNAs", x="RNA type", y="GC Content (%)") +
+        theme_minimal()
+
+    pdf( file.path("./plots", "rnas_gc_violin.pdf"), onefile = TRUE )
+    print(violin_rna_gc)
     dev.off()
 
     # ==========================================================================
