@@ -49,18 +49,18 @@ for(fn in files_in){
                      Length = reads_length,
                      GCFreq = gc_freq,
                      GCPerc = gc_perc)
-    dt_raw <- dt[, .(Length, GCFreq, GCPerc, NCopies = .N), by = Reads][order(-NCopies)]
 
-    # Filter out duplicated rows
-    dt_unique <- unique(dt_raw)
-    print(dt_unique)
+    # Filter out duplicates after grouping by sequence
+    dt_dups <- unique(dt[, .(Length, GCFreq, GCPerc, NCopies = .N), by = Reads][order(-NCopies)])
 
-    # Unique reads
-    # reads_unique <- unique(reads_raw)
+    # Count number of sequences longer than 30 nucleotides
+    dt_longer <- dt[Length > 30, .(Count = .N, Perc = .N / nrow(dt) * 100)]
+    print(dt_longer)
 
-    # Unique sequences
-    # df <- data.frame(Reads = reads_unique,
-    #                  Length = width(reads_unique))
+    # Filter out sequences longer than 30 nucleotides
+    dt_filtered <- dt[Length < 31]
+    print(dt_filtered)
+
 
 
     # Frequency distribution and cumulative distribution
