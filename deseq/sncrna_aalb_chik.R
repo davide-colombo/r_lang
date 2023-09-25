@@ -67,7 +67,9 @@ for(fn in files_in){
     dt_dups_filt <- unique(dt_filt[, .(Length, GCFreq, GCPerc, NCopies = .N), by = Reads][order(-NCopies)])
     # print(dt_dups_filt)
 
-    # Count number of sequences with more than 10 duplicates
+    # ==========================================================================
+    # Duplicates
+    # ==========================================================================
     dt_dups_filt_more10copies <- dt_dups_filt[NCopies > 10, .(Count = .N, Perc = .N / nrow(dt_dups_filt) * 100)]
     print(dt_dups_filt_more10copies)
 
@@ -80,19 +82,33 @@ for(fn in files_in){
     dt_dups_filt_more10000copies <- dt_dups_filt[NCopies > 10000, .(Count = .N, Perc = .N / nrow(dt_dups_filt) * 100)]
     print(dt_dups_filt_more10000copies)
 
+    # ==========================================================================
+    # GC percentage
+    # ==========================================================================
+    dt_filt_gc_mean <- dt_filt[, .(Mean = mean(GCPerc), SD = sd(GCPerc), Count = .N)]
+    print(dt_filt_gc_mean)
+
+    # ==========================================================================
     # Small interfering RNAs
+    # ==========================================================================
     dt_sirna <- dt[Length > 18 & Length < 24]
     # print(dt_sirna)
 
+    dt_sirna_gc <- dt_sirna[, .(Mean = mean(GCPerc), SD = sd(GCPerc), Count = .N)]
+    # print(dt_sirna_gc)
+
+    # ==========================================================================
     # PIWI-interacting RNAs
+    # ==========================================================================
     dt_pirna <- dt[Length > 23 & Length < 31]
     # print(dt_pirna)
 
-    # ==========================================================================
-    # Draw read length distribution...
-    # ==========================================================================
+    dt_pirna_gc <- dt_pirna[, .(Mean = mean(GCPerc), SD = sd(GCPerc), Count = .N)]
+    # print(dt_pirna_gc)
 
-    # siRNAs
+    # ==========================================================================
+    # Read length distribution siRNA
+    # ==========================================================================
     nbins <- nrow(dt_sirna[, .N, by = Length])
     hist_sirna <- ggplot(dt_sirna, aes(x = Length)) +
         geom_histogram(bins = nbins, color = "black", fill = "blue") +
@@ -104,7 +120,9 @@ for(fn in files_in){
     print(hist_sirna)
     dev.off()
 
-    # piRNAs
+    # ==========================================================================
+    # Read length distribution piRNA
+    # ==========================================================================
     nbins <- nrow(dt_pirna[, .N, by = Length])
     hist_pirna <- ggplot(dt_pirna, aes(x = Length)) +
         geom_histogram(bins = nbins, color = "black", fill = "blue") +
@@ -117,10 +135,8 @@ for(fn in files_in){
     dev.off()
 
     # ==========================================================================
-    # Draw the distribution of GC content...
+    # GC percentage distribution siRNA
     # ==========================================================================
-
-    # siRNAs
     hist_sirna_gc <- ggplot(dt_sirna, aes(x=GCPerc)) +
         geom_histogram(bins = 20, fill="steelblue", color="black") +
         labs(title="Frequency Distribution of GC Content, small interfering RNAs", x="GC Content (%)", y="Frequency") +
@@ -130,7 +146,9 @@ for(fn in files_in){
     print(hist_sirna_gc)
     dev.off()
 
-    # piRNas
+    # ==========================================================================
+    # GC percentage distribution piRNA
+    # ==========================================================================
     hist_pirna_gc <- ggplot(dt_pirna, aes(x=GCPerc)) +
         geom_histogram(bins = 20, fill="steelblue", color="black") +
         labs(title="Frequency Distribution of GC Content, PIWI-interacting RNAs", x="GC Content (%)", y="Frequency") +
