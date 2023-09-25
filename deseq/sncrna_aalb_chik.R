@@ -91,8 +91,16 @@ for(fn in files_in){
     # ==========================================================================
     # RNA species column
     # ==========================================================================
-    dt_rnas <- dt_filt[, .(Reads, Length, GCFreq, GCPerc, RNAType = ifelse(Length > 18 & Length < 24, "si", "pi"))]
-    print(dt_rnas)
+    dt_rnas <- dt_filt[, .(Reads, Length, GCFreq, GCPerc, RNAType = ifelse(Length > 18 & Length < 24, "si", "pi"))][order(GCFreq)]
+    # print(dt_rnas)
+
+    dt_rnas_gc_stats <- dt_filt[, .(Mean = mean(GCFreq), SD = sd(GCFreq)) ]
+
+    dt_rnas_ecdf <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf = ecdf(GCFreq)(GCFreq))]
+    print(dt_rnas_ecdf)
+
+    dt_rnas_tcdf <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCtcdf = pnorm(GCFreq, mean = dt_rnas_gc_stats$Mean, sd = dt_rnas_gc_stats$SD))]
+    print(dt_rnas_tcdf)
 
     # ==========================================================================
     # Small interfering RNAs
