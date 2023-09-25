@@ -97,10 +97,13 @@ for(fn in files_in){
     dt_rnas_gc_stats <- dt_filt[, .(Mean = mean(GCFreq), SD = sd(GCFreq)) ]
 
     dt_rnas_ecdf <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf = ecdf(GCFreq)(GCFreq))]
-    print(dt_rnas_ecdf)
+    # print(dt_rnas_ecdf)
 
-    dt_rnas_tcdf <- dt_rnas[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCtcdf = pnorm(GCFreq, mean = dt_rnas_gc_stats$Mean, sd = dt_rnas_gc_stats$SD))]
-    print(dt_rnas_tcdf)
+    dt_rnas_gc_dist <- dt_rnas_ecdf[, .(Reads, Length, GCFreq, GCPerc, RNAType, GCecdf, GCtcdf = pnorm(GCFreq, mean = dt_rnas_gc_stats$Mean, sd = dt_rnas_gc_stats$SD))]
+    # print(dt_rnas_gc_dist)
+
+    dt_rnas_gc_dev <- dt_rnas_gc_dist[, .(GCDevSum = sum(abs(GCecdf - GCtcdf)), GCDevMean = sum(abs(GCecdf - GCtcdf)) / .N)]
+    print(dt_rnas_gc_dev)
 
     # ==========================================================================
     # Small interfering RNAs
