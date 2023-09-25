@@ -57,9 +57,20 @@ for(fn in files_in){
     dt_longer <- dt[Length > 30, .(Count = .N, Perc = .N / nrow(dt) * 100)]
     print(dt_longer)
 
+    # These occupy just a small fraction of the reads, it can be due to artifacts in the library
+    # for example capturing or purification
+
     # Filter out sequences longer than 30 nucleotides
     dt_filtered <- dt[Length < 31]
     print(dt_filtered)
+
+    # Small interfering RNAs
+    dt_sirna <- dt[Length > 18 & Length < 24]
+    print(dt_sirna)
+
+    # PIWI-interacting RNAs
+    dt_pirna <- dt[Length > 23 & Length < 31]
+    print(dt_pirna)
 
 
 
