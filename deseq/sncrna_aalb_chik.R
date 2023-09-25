@@ -108,20 +108,14 @@ for(fn in files_in){
     # ==========================================================================
     # Draw the distribution of GC content...
     # ==========================================================================
-    # Convert to data frame
+    hist_pirna_gc <- ggplot(dt_pirna, aes(x=GCPerc)) +
+        geom_histogram(bins = 20, fill="steelblue", color="black") +
+        labs(title="Frequency Distribution of GC Content, PIWI-interacting RNAs", x="GC Content (%)", y="Frequency") +
+        theme_minimal()
 
-    # df <- data.frame(Sequence = sread(fastq_raw))
-    # df$GCPerc <- gc_perc
-    # print(head(df))
-    #
-    # histogram <- ggplot(df, aes(x=GCPerc)) +
-    #     geom_histogram(binwidth = 3, fill="steelblue", color="black") +
-    #     labs(title="Frequency Distribution of GC Content", x="GC Content (%)", y="Frequency") +
-    #     theme_minimal()
-    #
-    # pdf( file.path("./plots", "barplot_gc_perc.pdf"), onefile = TRUE )
-    # print(histogram)
-    # dev.off()
+    pdf( file.path("./plots", "pirna_gc_distribution.pdf"), onefile = TRUE )
+    print(hist_pirna_gc)
+    dev.off()
 
     # ==========================================================================
     # Write content to a file
