@@ -39,16 +39,35 @@ for(fn in files_in){
     # Reads length
     reads_length <- width(fastq_raw)
 
+    # ==========================================================================
     # Reads quality
+    # ==========================================================================
     reads_qual <- quality(fastq_raw)
 
+    # Convert ASCII to character
     phred_score <- as(reads_qual, "matrix")
 
+    # Data.table object
     dt_qual <- data.table(PhredMean = colMeans(phred_score, na.rm = TRUE),
                           NReads = colSums(!is.na(phred_score)))
-    print(dt_qual)
 
+    # ==========================================================================
+    # Per base sequence quality
+    # ==========================================================================
+    plot_phred <- ggplot(dt_qual) +
+        geom_line(aes(x = 1:nrow(dt_qual), y = PhredMean), color = "#121212") +
+        ylim(0, NA) +
+        labs(x = "Nucleotide position", y = "Phred score",
+             title = "Per base sequence quality, Sanger scale") +
+        theme_minimal()
+
+    pdf( file.path("./plots", "reads_phred_per_base.pdf"), onefile = TRUE)
+    print(plot_phred)
+    dev.off()
+
+    # ==========================================================================
     # GC content
+    # ==========================================================================
     gc_freq <- rowSums( letterFrequency(reads_raw, letters = c("G", "C")) )
     gc_perc <- gc_freq / reads_length * 100
 
